@@ -1,46 +1,56 @@
-// ------------------------------------------------------------
-// Project: Arduino Pomodoro Timer
-// Hardware:  Multi Function Shield (MFS), DS1302 RTC module
-// Author: https://github.com/beschasny
-// License:   MIT (see LICENSE file in repository)
-// ------------------------------------------------------------
+// -----------------------------------------------------------------
+// Project:  runUp - Arduino Pomodoro Timer
+// Hardware: Arduino UNO R3 (or compatible), Multi Function Shield,
+//           DS1302 RTC module
+// Author:   https://github.com/beschasny
+// License:  MIT (see LICENSE file in repository)
+// -----------------------------------------------------------------
 //
 // Description:
 //   Pomodoro timer for Arduino Uno R3 using a Multi Function
 //   Shield (buttons, display, buzzer) and a DS1302 RTC module.
-//   Features include sprint tracking, user settings, menu system,
-//   statistics, and more.
+//   Features include managing Pomodoro sprint sessions,
+//   statistics tracking, customizable settings, and more.
 //
 // Versioning:
-//   For version history, see git tags/releases on GitHub.
-// ------------------------------------------------------------
+//   For version history, see Git tags/releases on GitHub.
+// -----------------------------------------------------------------
 
-// ------------------------------------------------------------
+// -----------------------------------------------------------------
 // Includes
-// ------------------------------------------------------------
+// -----------------------------------------------------------------
 
-#include <MultiFuncShield.h> // https://github.com/beschasny/MultiFuncShield-Library
-#include <Ds1302.h>          // https://github.com/Treboada/Ds1302
+// Multi Function Shield library (modified)
+// https://github.com/beschasny/MultiFuncShield-Library
+#include <MultiFuncShield.h>
+
+// DS1302 RTC library
+// https://github.com/Treboada/Ds1302
+#include <Ds1302.h>
+
+// Arduino built-in libraries
 #include <EEPROM.h>
 #include <avr/sleep.h>
 
-// ------------------------------------------------------------
+// -----------------------------------------------------------------
 // Pinouts
-// ------------------------------------------------------------
+// -----------------------------------------------------------------
 
 // DS1302 RTC module
 const byte rtcRstPin                          = 5;
 const byte rtcClkPin                          = 9;
 const byte rtcDatPin                          = 6;
 Ds1302 rtc(rtcRstPin, rtcClkPin, rtcDatPin);
+
 // Buzzer
 const byte buzzerPin                          = 3;
+
 // Interruption
 const byte isrPin                             = 2;
 
-// ------------------------------------------------------------
+// -----------------------------------------------------------------
 // Enumeration types and related variables
-// ------------------------------------------------------------
+// -----------------------------------------------------------------
 
 // States
 enum OperatingStates {
@@ -124,9 +134,9 @@ byte statisticsMenuMode                       = DAILY;
 byte statisticsPeriod                         = YEARLY;
 byte dateTimeMode                             = HOURS_MINUTES;
 
-// ------------------------------------------------------------
+// -----------------------------------------------------------------
 // String constants
-// ------------------------------------------------------------
+// -----------------------------------------------------------------
 
 // Menu items
 // Use special characters to display letter combinations
@@ -172,9 +182,9 @@ const char countedDoWItems[][6] PROGMEM       = {
 const char alertSuccess[][6] PROGMEM          = {"nicz", "job!", ""};
 const char alertClearStatistics[][6] PROGMEM  = {"clr", "a|", "data", ""};
 
-// ------------------------------------------------------------
+// -----------------------------------------------------------------
 // Global variables and configuration
-// ------------------------------------------------------------
+// -----------------------------------------------------------------
 
 // Countdown and statistics
 byte currentInterval                          = 0;
@@ -223,9 +233,9 @@ const char* animatedCharacters[]              = {"~", ">", "1", "v", "_", "e", "
 const int animatedCharactersSize              = sizeof(animatedCharacters) / sizeof(animatedCharacters[0]);
 static bool showStaticInfo                    = false;
 
-// ------------------------------------------------------------
+// -----------------------------------------------------------------
 // Setup
-// ------------------------------------------------------------
+// -----------------------------------------------------------------
 
 void setup() {
   delay(100);
@@ -359,9 +369,9 @@ void setup() {
   delay(500);
 }
 
-// ------------------------------------------------------------
+// -----------------------------------------------------------------
 // Loop
-// ------------------------------------------------------------
+// -----------------------------------------------------------------
 
 void loop() {
   byte btn = MFS.getButton();
@@ -562,7 +572,6 @@ void loop() {
       // Beep every minute to remind that sprint is paused
       unsigned long now = millis();
       if (config.buzzEnabled && config.cueEnabled && (now - lastPausedBeep >= 60000)) {
-      //if (config.buzzEnabled && (now - lastPausedBeep >= 60000)) {
         MFS.beep(5, 5, 1);
         lastPausedBeep = now;
       }
@@ -660,9 +669,9 @@ void loop() {
   }
 }
 
-// ------------------------------------------------------------
+// -----------------------------------------------------------------
 // Helper functions
-// ------------------------------------------------------------
+// -----------------------------------------------------------------
 
 // ---- Config Handling ----
 
