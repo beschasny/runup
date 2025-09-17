@@ -233,6 +233,9 @@ const char* animatedCharacters[]              = {"~", ">", "1", "v", "_", "e", "
 const int animatedCharactersSize              = sizeof(animatedCharacters) / sizeof(animatedCharacters[0]);
 static bool showStaticInfo                    = false;
 
+// Forward declaration of melodies size
+extern const uint8_t melodiesSize;
+
 // -----------------------------------------------------------------
 // Setup
 // -----------------------------------------------------------------
@@ -1370,10 +1373,10 @@ void subMenuConfig(byte btn) {
       }
     } else if (configMenuMode == TUNE) {
       // Tune setting
-      if (config.tune > 0 && config.tune < 9) {
+      if (config.tune > 0 && config.tune <= melodiesSize) {
         sprintf(formattedString, "tn.%02d", config.tune);
         MFS.write(formattedString);
-      } else if (config.tune == 9) {
+      } else if (config.tune == melodiesSize + 1) {
         MFS.write("rnd");
       } else {
         MFS.write("off");
@@ -1381,9 +1384,9 @@ void subMenuConfig(byte btn) {
 
       if (btn == BUTTON_2_SHORT_RELEASE) {
         // Cycle to next tune
-        config.tune = (config.tune + 1) % 10;
+        config.tune = (config.tune + 1) % (melodiesSize + 2);
       } else if (btn == BUTTON_3_SHORT_RELEASE || btn == BUTTON_1_SHORT_RELEASE) {
-        if (btn == BUTTON_3_SHORT_RELEASE && config.tune > 0 && config.tune < 9) {
+        if (btn == BUTTON_3_SHORT_RELEASE && config.tune > 0 && config.tune <= melodiesSize) {
           playMelody(config.tune);
         }
 
@@ -1740,8 +1743,9 @@ void turnOffBlinkAndLeds() {
 
 // Notes and their frequencies
 const int NOTE_A3 = 220, NOTE_AS3 = 233, NOTE_B3 = 247, NOTE_E3 = 165, NOTE_F3 = 175, NOTE_FS3 = 185, NOTE_G3 = 196, NOTE_GS3 = 208,
-          NOTE_AS4 = 466, NOTE_B4 = 494, NOTE_C4 = 262, NOTE_CS4 = 277, NOTE_D4 = 294, NOTE_DS4 = 311, NOTE_E4 = 330, NOTE_F4 = 349, NOTE_FS4 = 370, NOTE_G4 = 392, NOTE_GS4 = 415, NOTE_A4 = 440,
-          NOTE_C5 = 523, NOTE_D5 = 587, NOTE_E5 = 659, REST = 0;
+          NOTE_A4 = 440, NOTE_AS4 = 466, NOTE_B4 = 494, NOTE_C4 = 262, NOTE_CS4 = 277, NOTE_D4 = 294, NOTE_DS4 = 311, NOTE_E4 = 330, NOTE_F4 = 349, NOTE_FS4 = 370, NOTE_G4 = 392, NOTE_GS4 = 415,
+          NOTE_C5 = 523, NOTE_CS5 = 554, NOTE_D5 = 587, NOTE_DS5 = 622, NOTE_E5 = 659,
+          REST = 0;
 
 // Henry Mancini - Baby Elephant Walk (intro)
 const int melody1[] PROGMEM = {
@@ -1894,6 +1898,41 @@ const int melody8[] PROGMEM = {
   NOTE_E3, 12,
 };
 
+// Little Barrie - Better Call Saul Theme
+const int melody9[] PROGMEM = {
+  NOTE_A4, 2, REST, 4,
+  NOTE_E4, 12,
+  NOTE_A4, 12,
+  NOTE_CS5, 12,
+  NOTE_GS4, 12,
+  NOTE_E4, 6,
+  NOTE_C5, 2, REST, 4,
+  NOTE_E5, 6,
+  NOTE_D5, 12,
+  NOTE_C5, 4,
+  NOTE_A4, 2,
+};
+
+// Gorillaz - Clint Eastwood
+const int melody10[] PROGMEM = {
+  NOTE_DS5, 12,
+  NOTE_CS5, 6,
+  NOTE_DS5, 6,
+  NOTE_DS4, 6, REST, 6,
+  NOTE_DS4, 6,
+  NOTE_DS4, 12,
+  NOTE_FS4, 6,
+  NOTE_AS4, 6,
+  NOTE_GS4, 12,
+  NOTE_AS4, 6,
+  NOTE_DS5, 6,
+  NOTE_DS4, 6, REST, 6,
+  NOTE_DS4, 6,
+  NOTE_DS4, 12,
+  NOTE_FS4, 6,
+  NOTE_AS4, 6,
+};
+
 const int* const melodies[] PROGMEM = {
   melody1,
   melody2,
@@ -1902,7 +1941,9 @@ const int* const melodies[] PROGMEM = {
   melody5,
   melody6,
   melody7,
-  melody8
+  melody8,
+  melody9,
+  melody10
 };
 
 const uint16_t melodyLengths[] PROGMEM = {
@@ -1914,13 +1955,17 @@ const uint16_t melodyLengths[] PROGMEM = {
   sizeof(melody6) / sizeof(melody6[0]),
   sizeof(melody7) / sizeof(melody7[0]),
   sizeof(melody8) / sizeof(melody8[0]),
+  sizeof(melody9) / sizeof(melody9[0]),
+  sizeof(melody10) / sizeof(melody10[0]),
 };
+
+const uint8_t melodiesSize = sizeof(melodies) / sizeof(melodies[0]);
 
 // Play melody with disco lights
 void playMelody(byte melodyId) {
-  if (melodyId == 9) {
+  if (melodyId == melodiesSize + 1) {
     // Randomize melodies
-    melodyId = random(1, 9);
+    melodyId = random(1, melodiesSize + 1);
   }
   melodyId--;
 
