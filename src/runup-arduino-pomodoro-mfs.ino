@@ -272,12 +272,8 @@ void setup() {
     getCurrentDayOfYear();
   }
 
-  // If tomorrow + 1 cell isn't empty, the cycle is complete or something is wrong
-  if (errorCode == 0 && EEPROM.read(currentDayOfYear + 2) != EMPTY_VALUE) {
-    Serial.println(F("Error (#03): Already existed record (data not cleared)"));
-    operatingState = ERROR;
-    errorCode = 3;
-  }
+  // Ensure tomorrow's cell is empty or can be safely overwritten
+  validateNextDayCell();
 
   // If no errors check if it is needed to update sprintCounter and skipped days
   if (errorCode == 0) {
@@ -717,13 +713,6 @@ void loadConfig() {
   }
 }
 
-// Save config to EEPROM
-void saveConfig() {
-  Serial.println(F("EEPROM: Save config"));
-  EEPROM.put(CONFIG_ADDRESS, config);
-  delay(5);
-}
-
 // Initialize config with defaults
 void initConfig() {
   // Set default values starting from CONFIG_ADDRESS
@@ -739,6 +728,13 @@ void initConfig() {
   config.countingUnits       = 1;
   config.heroModeEnabled     = false;
   config.muteModeEnabled     = false;
+}
+
+// Save config to EEPROM
+void saveConfig() {
+  Serial.println(F("EEPROM: Save config"));
+  EEPROM.put(CONFIG_ADDRESS, config);
+  delay(5);
 }
 
 // ---- Date and Time Operations ----
@@ -793,7 +789,7 @@ void getCurrentDayOfYear() {
 // Check RTC date and time for sanity
 bool isRtcDateTimeSane(Ds1302::DateTime now) {
   Serial.println(F("Debug (RTC): calling isRtcDateTimeSane()"));
-  Serial.println(F("Debug (RTC): Now:")); delay(10);
+  Serial.print(F("Debug (RTC): Now: ")); delay(10);
   Serial.print(2000 + now.year); delay(10);
   Serial.print(F("-")); delay(10);
   Serial.print(now.month); delay(10);
@@ -984,18 +980,30 @@ void setInterval(int value) {
   }
 }
 
+// Ensure tomorrow's cell is empty or can be safely overwritten
+void validateNextDayCell() {
+  // Look ahead to check if cycle is complete or data invalid
+  byte nextValue = EEPROM.read(currentDayOfYear + 2);
+
+  if (errorCode == 0 && nextValue != EMPTY_VALUE) {
+    if (nextValue >= 0 && nextValue < 58) {
+      Serial.println(F("Debug (sprint): Cycle is complete, going to overwrite data"));
+    } else {
+      Serial.println(F("Error (#03): Already existed non-standard record (data not cleared)"));
+      operatingState = ERROR;
+      errorCode = 3;
+    }
+  }
+}
+
 // Save current sprint counter according to current day of year
 void saveSprint() {
-  uint8_t initialDayOfYear = currentDayOfYear;
+  uint16_t initialDayOfYear = currentDayOfYear;
   // Update current day of year
   getCurrentDayOfYear();
 
-  // If tomorrow + 1 cell isn't empty, the cycle is complete or something is wrong
-  if (errorCode == 0 && EEPROM.read(currentDayOfYear + 2) != EMPTY_VALUE) {
-    Serial.println(F("Error (#03): Already existed record (data not cleared)"));
-    operatingState = ERROR;
-    errorCode = 3;
-  }
+  // Ensure tomorrow's cell is empty or can be safely overwritten
+  validateNextDayCell();
 
   if (errorCode == 0) {
     if (currentDayOfYear == initialDayOfYear) {
