@@ -1,13 +1,13 @@
 // -----------------------------------------------------------------
 // Project:  runUp - Arduino Pomodoro Timer
-// Hardware: Arduino UNO R3 (or compatible), Multi Function Shield,
+// Hardware: Arduino UNO R3 (or compatible), Multifunction Shield,
 //           DS1302 RTC module
 // Author:   https://github.com/beschasny
 // License:  MIT (see LICENSE file in repository)
 // -----------------------------------------------------------------
 //
 // Description:
-//   Pomodoro timer for Arduino Uno R3 using a Multi Function
+//   Pomodoro timer for Arduino Uno R3 using a Multifunction
 //   Shield (buttons, display, buzzer) and a DS1302 RTC module.
 //   Features include managing Pomodoro sprint sessions,
 //   statistics tracking, customizable settings, and more.
@@ -20,7 +20,7 @@
 // Includes
 // -----------------------------------------------------------------
 
-// Multi Function Shield library (modified)
+// Multifunction Shield library (modified)
 // https://github.com/beschasny/MultiFuncShield-Library
 #include <MultiFuncShield.h>
 
@@ -198,7 +198,7 @@ uint16_t currentDayOfYear                     = 1;
 int statisticsArray[SUBMENU_STATISTICS_MODES_COUNT - 1][STATISTICS_PERIODS_COUNT];
 
 // Configs
-#define VERSION                               111
+#define VERSION                               112
 #define CONFIG_SIGNATURE                      0x42 // 66
 #define CONFIG_ADDRESS                        1015
 #define EMPTY_VALUE                           0xFF
