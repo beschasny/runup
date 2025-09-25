@@ -161,3 +161,19 @@ Use a utility knife and a flat file to adjust the walls at the marked positions 
 After routing the jumper wire and assembling the enclosure, the device should look like this (button icons added for clarity):
 
 ![Assembly step 5: Final look](docs/assembly/step-5-runUp-device.png)
+
+## Software
+
+### Libraries
+
+The runUp device uses my fork of the **Multifunction Shield library** by Kashif Baig and Cohesive Computing. It also requires the **DS1302 library** by Rafa Couto, along with the built-in Arduino libraries for EEPROM and Sleep Mode support.
+
+- [Multifunction Shield library](https://github.com/beschasny/MultiFuncShield-Library)
+- [DS1302 RTC Module library](https://github.com/Treboada/Ds1302)
+- Built-in: EEPROM, avr/sleep
+
+### Uploading the program
+
+After assembling the device and reading the note below, upload the program sketch via USB cable using the Arduino IDE or any other environment that supports uploading. If everything works as expected, the display will either show a diagnostic message or the first menu item, depending on your setup and initial conditions (such as the RTC module settings and EEPROM contents).
+
+> ℹ️ **Note:** The device uses EEPROM. If your Arduino already has data stored there, you'll need to clear it for proper operation. This can be done directly with the device, as you will see later.
