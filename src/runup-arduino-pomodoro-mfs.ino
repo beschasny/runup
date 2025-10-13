@@ -260,23 +260,27 @@ void setup() {
   state.inStatisticsDetailsSubmenu = false;
   state.inConfigSubmenu            = false;
 
-  // Initialize RTC and set date and time (on init or after reset)
+  // Initialize RTC
   rtc.init();
-  if (rtc.isHalted()) {
-    Serial.println(F("Error (#01): RTC is halted"));
-    errorCode = 1;
-    operatingState = ERROR;
-  } else {
-    // Get current day of year to use as current EEPROM address,
-    // also check date and time for sanity
-    getCurrentDayOfYear();
+
+  // Check and get date and time (if not first run)
+  if (operatingState != DATETIMESETUP) {
+    if (rtc.isHalted()) {
+      Serial.println(F("Error (#01): RTC is halted"));
+      errorCode = 1;
+      operatingState = ERROR;
+    } else {
+      // Get current day of year to use as current EEPROM address,
+      // also check date and time for sanity
+      getCurrentDayOfYear();
+
+      // Ensure tomorrow's cell is empty or can be safely overwritten
+      validateNextDayCell();
+    }
   }
 
-  // Ensure tomorrow's cell is empty or can be safely overwritten
-  validateNextDayCell();
-
   // If no errors check if it is needed to update sprintCounter and skipped days
-  if (errorCode == 0) {
+  if (errorCode == 0 && operatingState == STANDBY) {
     uint8_t savedSprintCounter = EEPROM.read(currentDayOfYear);
     if (savedSprintCounter != EMPTY_VALUE 
       && savedSprintCounter != SPRINTS_END_BYTE 
@@ -335,7 +339,6 @@ void setup() {
           EEPROM.update(skippedDayOfYear, 0);
           delay(5);
         }
-
       }
 
       // Save end byte signature
@@ -684,6 +687,7 @@ void loadConfig() {
 
     initConfig();
     saveConfig();
+    operatingState = DATETIMESETUP;
   } else if (config.version != VERSION) {
     Serial.println(F("EEPROM: Version is changed, doing migration"));
     // Version is changed, store old config values to keep it
