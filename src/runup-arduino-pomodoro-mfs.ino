@@ -1756,47 +1756,106 @@ void turnOffBlinkAndLeds() {
 // Notes and their frequencies
 const int NOTE_A3 = 220, NOTE_AS3 = 233, NOTE_B3 = 247, NOTE_E3 = 165, NOTE_F3 = 175, NOTE_FS3 = 185, NOTE_G3 = 196, NOTE_GS3 = 208,
           NOTE_A4 = 440, NOTE_AS4 = 466, NOTE_B4 = 494, NOTE_C4 = 262, NOTE_CS4 = 277, NOTE_D4 = 294, NOTE_DS4 = 311, NOTE_E4 = 330, NOTE_F4 = 349, NOTE_FS4 = 370, NOTE_G4 = 392, NOTE_GS4 = 415,
-          NOTE_C5 = 523, NOTE_CS5 = 554, NOTE_D5 = 587, NOTE_DS5 = 622, NOTE_E5 = 659,
+          NOTE_A5 = 880, NOTE_B5 = 988, NOTE_C5 = 523, NOTE_CS5 = 554, NOTE_D5 = 587, NOTE_DS5 = 622, NOTE_E5 = 659, NOTE_F5 = 698, NOTE_FS5 = 740, NOTE_G5 = 784, NOTE_GS5 = 831,
+          NOTE_A6 = 1760,
           REST = 0;
 
-// Henry Mancini - Baby Elephant Walk (intro)
+// Koji Kondo - Super Mario Bros. (Flagpole Fanfare)
 const int melody1[] PROGMEM = {
+  NOTE_FS3, 15,
+  NOTE_B3,  15,
+  NOTE_DS4, 15,
+  NOTE_FS4, 15,
+  NOTE_B4,  15,
+  NOTE_DS5, 15,
+  NOTE_FS5,  5,
+  NOTE_DS5,  5,
+
+  NOTE_G3,  15,
+  NOTE_B3,  15,
+  NOTE_D4,  15,
+  NOTE_G4,  15,
+  NOTE_B4,  15,
+  NOTE_D5,  15,
+  NOTE_G5,   5,
+  NOTE_D5,   5,
+
+  NOTE_A3,  15,
+  NOTE_CS4, 15,
+  NOTE_E4,  15,
+  NOTE_A4,  15,
+  NOTE_CS5, 15,
+  NOTE_E5,  15,
+  NOTE_A5,   5,
+  NOTE_A5,  15,
+  NOTE_A5,  15,
+  NOTE_A5,  15,
+  NOTE_B5,   4,
+  REST,     15,
+};
+
+// Koji Kondo - Super Mario Bros. (Overworld theme)
+const int melody2[] PROGMEM = {
+  NOTE_C5,  -6,
+  NOTE_G4,  12,
+  REST, 6,
+  NOTE_E4,  -6,
+  NOTE_A4,   6,
+  NOTE_B4,   6,
+  NOTE_AS4, 12,
+
+  NOTE_A4,   6,
+  NOTE_G4, -12,
+  NOTE_E5, -12,
+  NOTE_G5, -12,
+  NOTE_A5,   6,
+  NOTE_F5,  12,
+  NOTE_G5,  12,
+  REST,     12,
+  NOTE_E5,   6,
+  NOTE_C5,  12,
+  NOTE_D5,  12,
+  NOTE_B4,  -6,
+};
+
+// Henry Mancini - Baby Elephant Walk (intro)
+const int melody3[] PROGMEM = {
   NOTE_C4, -8,
   NOTE_E4, 16,
-  NOTE_G4, 8,
-  NOTE_C5, 8,
-  NOTE_E5, 8,
-  NOTE_D5, 8,
-  NOTE_C5, 8,
-  NOTE_A4, 8,
+  NOTE_G4,  8,
+  NOTE_C5,  8,
+  NOTE_E5,  8,
+  NOTE_D5,  8,
+  NOTE_C5,  8,
+  NOTE_A4,  8,
   NOTE_FS4, 8,
-  NOTE_G4, 8
+  NOTE_G4,  8
 };
 
 // Henry Mancini - Baby Elephant Walk (outro)
-const int melody2[] PROGMEM = {
-  NOTE_C5, 4,
-  NOTE_C5, 4,
+const int melody4[] PROGMEM = {
+  NOTE_C5,   4,
+  NOTE_C5,   4,
   NOTE_AS4, 16,
-  NOTE_C5, 16,
+  NOTE_C5,  16,
   NOTE_AS4, 16,
-  NOTE_G4, 16,
-  NOTE_F4, 8,
-  NOTE_DS4, 8,
-  NOTE_FS4, 4,
-  NOTE_FS4, 4,
-  NOTE_F4, 16,
-  NOTE_G4, 16,
-  NOTE_F4, 16,
+  NOTE_G4,  16,
+  NOTE_F4,   8,
+  NOTE_DS4,  8,
+  NOTE_FS4,  4,
+  NOTE_FS4,  4,
+  NOTE_F4,  16,
+  NOTE_G4,  16,
+  NOTE_F4,  16,
   NOTE_DS4, 16,
-  NOTE_C4, 8,
-  NOTE_G4, 8,
-  NOTE_AS4, 8,
-  NOTE_C5, 8,
+  NOTE_C4,   8,
+  NOTE_G4,   8,
+  NOTE_AS4,  8,
+  NOTE_C5,   8,
 };
 
 // Tetris
-const int melody3[] PROGMEM = {
+const int melody5[] PROGMEM = {
   NOTE_E5, 4,
   NOTE_B4, 8,
   NOTE_C5, 8,
@@ -1807,7 +1866,7 @@ const int melody3[] PROGMEM = {
 };
 
 // Elderbrook & Vintage Culture - Run
-const int melody4[] PROGMEM = {
+const int melody6[] PROGMEM = {
   NOTE_AS4, 16,
   NOTE_AS4, 16, REST, 16,
   NOTE_AS4, 16, REST, 16,
@@ -1816,7 +1875,7 @@ const int melody4[] PROGMEM = {
   NOTE_GS4, 16, REST, 16,
   NOTE_GS4, 16,
   NOTE_AS4, 16, REST, 16,
-  NOTE_G4, 16, REST, 16,
+  NOTE_G4,  16, REST, 16,
 
   NOTE_DS4, 16,
   NOTE_DS4, 16, REST, 16,
@@ -1825,124 +1884,169 @@ const int melody4[] PROGMEM = {
   NOTE_DS4, 16, REST, 16,
   NOTE_DS4, 16, REST, 16,
   NOTE_DS4, 16,
-  NOTE_F4, 16, REST, 16,
-  NOTE_D4, 16, REST, 16
+  NOTE_F4,  16, REST, 16,
+  NOTE_D4,  16, REST, 16
 };
 
 // K.Flay - Not In California
-const int melody5[] PROGMEM = {
+const int melody7[] PROGMEM = {
   NOTE_GS4, 6,
   NOTE_FS4, 6,
   NOTE_GS4, 6,
   NOTE_FS4, 6,
-  NOTE_E4, 6,
-  NOTE_B3, 3,
-  NOTE_E4, 2,
-  NOTE_E4, 6,
+  NOTE_E4,  6,
+  NOTE_B3,  3,
+  NOTE_E4,  2,
+  NOTE_E4,  6,
   NOTE_DS4, 6,
   NOTE_CS4, 3
 };
 
 // Lana Del Ray - Summertime Sadness
-const int melody6[] PROGMEM = {
+const int melody8[] PROGMEM = {
   NOTE_CS4, 10, REST, 15,
   NOTE_CS4, 10, REST, 15,
   NOTE_CS4, 10, REST, 15,
-  NOTE_E4, 6,
-  NOTE_FS4, 6,
-  NOTE_E4, 3,
+  NOTE_E4,   6,
+  NOTE_FS4,  6,
+  NOTE_E4,   3,
   NOTE_CS4, 10, REST, 15,
   NOTE_CS4, 10, REST, 15,
-  NOTE_CS4, 4, REST, 15,
-  NOTE_FS4, 3,
-  NOTE_E4, 3
+  NOTE_CS4,  4, REST, 15,
+  NOTE_FS4,  3,
+  NOTE_E4,   3
 };
 
 // Coldplay - Clocks
-const int melody7[] PROGMEM = {
+const int melody9[] PROGMEM = {
   NOTE_DS4, 10,
   NOTE_AS3, 10,
-  NOTE_G3, 10,
+  NOTE_G3,  10,
   NOTE_DS4, 10,
   NOTE_AS3, 10,
-  NOTE_G3, 10,
+  NOTE_G3,  10,
   NOTE_DS4, 10,
   NOTE_AS3, 10,
   NOTE_CS4, 10,
   NOTE_AS3, 10,
-  NOTE_F3, 10,
+  NOTE_F3,  10,
   NOTE_CS4, 10,
   NOTE_AS3, 10,
-  NOTE_F3, 10,
+  NOTE_F3,  10,
   NOTE_CS4, 10,
   NOTE_AS3, 10
 };
 
 // Metallica - Master Of Puppets
-const int melody8[] PROGMEM = {
-  NOTE_E3, 12,
-  NOTE_E3, 12,
-  NOTE_E4, 12,
-  NOTE_E3, 12,
-  NOTE_E3, 12,
+const int melody10[] PROGMEM = {
+  NOTE_E3,  12,
+  NOTE_E3,  12,
+  NOTE_E4,  12,
+  NOTE_E3,  12,
+  NOTE_E3,  12,
   NOTE_DS4, 12,
-  NOTE_E3, 12,
-  NOTE_E3, 12,
-  NOTE_D4, 6,
-  NOTE_CS4, 6,
-  NOTE_C4, 3,
+  NOTE_E3,  12,
+  NOTE_E3,  12,
+  NOTE_D4,   6,
+  NOTE_CS4,  6,
+  NOTE_C4,   3,
   
-  NOTE_E3, 12,
-  NOTE_E3, 12,
-  NOTE_B3, 12,
-  NOTE_E3, 12,
-  NOTE_E3, 12,
+  NOTE_E3,  12,
+  NOTE_E3,  12,
+  NOTE_B3,  12,
+  NOTE_E3,  12,
+  NOTE_E3,  12,
   NOTE_AS3, 12,
-  NOTE_E3, 12,
-  NOTE_E3, 12,
-  NOTE_A3, 12,
-  NOTE_E3, 12,
+  NOTE_E3,  12,
+  NOTE_E3,  12,
+  NOTE_A3,  12,
+  NOTE_E3,  12,
   NOTE_GS3, 12,
-  NOTE_E3, 12,
-  NOTE_G3, 12,
-  NOTE_E3, 12,
+  NOTE_E3,  12,
+  NOTE_G3,  12,
+  NOTE_E3,  12,
   NOTE_FS3, 12,
-  NOTE_E3, 12,
+  NOTE_E3,  12,
 };
 
 // Little Barrie - Better Call Saul Theme
-const int melody9[] PROGMEM = {
-  NOTE_A4, 2, REST, 4,
-  NOTE_E4, 12,
-  NOTE_A4, 12,
+const int melody11[] PROGMEM = {
+  NOTE_A4,   2, REST, 4,
+  NOTE_E4,  12,
+  NOTE_A4,  12,
   NOTE_CS5, 12,
   NOTE_GS4, 12,
-  NOTE_E4, 6,
-  NOTE_C5, 2, REST, 4,
-  NOTE_E5, 6,
-  NOTE_D5, 12,
-  NOTE_C5, 4,
-  NOTE_A4, 2,
+  NOTE_E4,   6,
+  NOTE_C5,   2, REST, 4,
+  NOTE_E5,   6,
+  NOTE_D5,  12,
+  NOTE_C5,   4,
+  NOTE_A4,   2,
 };
 
 // Gorillaz - Clint Eastwood
-const int melody10[] PROGMEM = {
+const int melody12[] PROGMEM = {
   NOTE_DS5, 12,
-  NOTE_CS5, 6,
-  NOTE_DS5, 6,
-  NOTE_DS4, 6, REST, 6,
-  NOTE_DS4, 6,
+  NOTE_CS5,  6,
+  NOTE_DS5,  6,
+  NOTE_DS4,  6, REST, 6,
+  NOTE_DS4,  6,
   NOTE_DS4, 12,
-  NOTE_FS4, 6,
-  NOTE_AS4, 6,
+  NOTE_FS4,  6,
+  NOTE_AS4,  6,
   NOTE_GS4, 12,
-  NOTE_AS4, 6,
-  NOTE_DS5, 6,
-  NOTE_DS4, 6, REST, 6,
-  NOTE_DS4, 6,
+  NOTE_AS4,  6,
+  NOTE_DS5,  6,
+  NOTE_DS4,  6, REST, 6,
+  NOTE_DS4,  6,
   NOTE_DS4, 12,
-  NOTE_FS4, 6,
-  NOTE_AS4, 6,
+  NOTE_FS4,  6,
+  NOTE_AS4,  6,
+};
+
+// Fontaines D.C. - Starbuster
+const int melody13[] PROGMEM = {
+  NOTE_A3,   3,
+  NOTE_FS4,  3,
+  NOTE_A3,   6,
+  NOTE_D4,  18,
+  NOTE_FS4, 18,
+  NOTE_A4,  18,
+  NOTE_D5,   3,
+  NOTE_AS3,  3,
+  NOTE_F4,   3,
+  NOTE_D5,   3,
+  NOTE_C5,   3,
+};
+
+// A-Ha - Take On Me
+const int melody14[] PROGMEM = {
+  NOTE_FS5, 10,
+  NOTE_FS5, 10,
+  NOTE_D5,  10,
+  NOTE_B4,  10, REST, 10,
+  NOTE_B4,  10, REST, 10,
+  NOTE_E5,  10, REST, 10,
+  NOTE_E5,  10, REST, 10,
+
+  NOTE_E5,  10,
+  NOTE_GS5, 10,
+  NOTE_GS5, 10,
+  NOTE_A5,  10,
+  NOTE_B5,  10,
+  NOTE_A5,  10,
+  NOTE_A5,  10,
+  NOTE_A5,  10,
+  NOTE_E5,  10, REST, 10,
+  NOTE_D5,  10, REST, 10,
+  NOTE_FS5, 10, REST, 10,
+  NOTE_FS5, 10, REST, 10,
+
+  NOTE_FS5, 10,
+  NOTE_E5,  10,
+  NOTE_E5,  10,
+  NOTE_FS5, 10,
+  NOTE_E5,  10,
 };
 
 const int* const melodies[] PROGMEM = {
@@ -1955,7 +2059,11 @@ const int* const melodies[] PROGMEM = {
   melody7,
   melody8,
   melody9,
-  melody10
+  melody10,
+  melody11,
+  melody12,
+  melody13,
+  melody14
 };
 
 const uint16_t melodyLengths[] PROGMEM = {
@@ -1969,6 +2077,10 @@ const uint16_t melodyLengths[] PROGMEM = {
   sizeof(melody8) / sizeof(melody8[0]),
   sizeof(melody9) / sizeof(melody9[0]),
   sizeof(melody10) / sizeof(melody10[0]),
+  sizeof(melody11) / sizeof(melody11[0]),
+  sizeof(melody12) / sizeof(melody12[0]),
+  sizeof(melody13) / sizeof(melody13[0]),
+  sizeof(melody14) / sizeof(melody14[0]),
 };
 
 const uint8_t melodiesSize = sizeof(melodies) / sizeof(melodies[0]);
