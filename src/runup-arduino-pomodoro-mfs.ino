@@ -73,6 +73,7 @@ struct States {
   bool isSprintPaused                         : 1;
   bool inSubmenu                              : 1;
   bool inStatisticsSubmenu                    : 1;
+  bool inStatisticsDailySubmenu               : 1;
   bool inStatisticsDetailsSubmenu             : 1;
   bool inConfigSubmenu                        : 1;
 };
@@ -87,6 +88,7 @@ enum MainMenuModes {
   MENU_MODES_COUNT
 };
 enum StatisticsMenuModes {
+  NOW,
   DAILY,
   TOTAL,
   MINIMUM,
@@ -96,9 +98,23 @@ enum StatisticsMenuModes {
   SUBMENU_STATISTICS_MODES_COUNT
 };
 enum StatisticsPeriods {
-  YEARLY,
-  MONTHLY,
-  WEEKLY,
+  ROLL365D,
+  ROLL100D,
+  ROLL60D,
+  ROLL30D,
+  ROLL7D,
+  MONTH01,
+  MONTH02,
+  MONTH03,
+  MONTH04,
+  MONTH05,
+  MONTH06,
+  MONTH07,
+  MONTH08,
+  MONTH09,
+  MONTH10,
+  MONTH11,
+  MONTH12,
   STATISTICS_PERIODS_COUNT
 };
 enum ConfigMenuModes {
@@ -130,8 +146,8 @@ enum DateTimeModes {
 
 byte mainMenuMode                             = SPRINT;
 byte configMenuMode                           = LCD;
-byte statisticsMenuMode                       = DAILY;
-byte statisticsPeriod                         = YEARLY;
+byte statisticsMenuMode                       = NOW;
+byte statisticsPeriod                         = ROLL365D;
 byte dateTimeMode                             = HOURS_MINUTES;
 
 // -----------------------------------------------------------------
@@ -147,6 +163,7 @@ const char mainMenuItems[][6] PROGMEM         = {
   "cloc"  // Clock and calendar
 };
 const char statisticsMenuItems[][6] PROGMEM   = {
+  "no#i", // Today
   "da{u", // Daily statistics
   "totl", // Total sprints
   "#iin", // Minimum
@@ -155,9 +172,11 @@ const char statisticsMenuItems[][6] PROGMEM   = {
   "clr"   // Clear all statistics data
 };
 const char statisticsPeriods[][6] PROGMEM     = {
-  "365d", // Last year
-  " 30d", // Last month
-  "  7d"  // Last week
+  "365d", // 365 days
+  "100d", // 100 days
+  " 60d", // 60 days
+  " 30d", // 30 days
+  "  7d", // 7 days
 };
 const char configMenuItems[][6] PROGMEM       = {
   "1cd",   // Display settings
@@ -192,13 +211,17 @@ byte tenths                                   = 0;
 char seconds                                  = 0;
 char minutes                                  = 0;
 uint8_t sprintCounter                         = 0;
+uint8_t currentDayOfWeek                      = 1;
 uint16_t currentDayOfYear                     = 1;
+uint8_t currentMonth                          = 1;
+uint16_t inputDayOfYear                       = 1;
+uint16_t currentYear                          = 2025;
 
 // Using int with x10 multiplier to simulate float and reduce memory usage
 int statisticsArray[SUBMENU_STATISTICS_MODES_COUNT - 1][STATISTICS_PERIODS_COUNT];
 
 // Configs
-#define VERSION                               112
+#define VERSION                               120
 #define CONFIG_SIGNATURE                      0x42 // 66
 #define CONFIG_ADDRESS                        1015
 #define EMPTY_VALUE                           0xFF
@@ -257,6 +280,7 @@ void setup() {
   state.isSprintPaused             = false;
   state.inSubmenu                  = false;
   state.inStatisticsSubmenu        = false;
+  state.inStatisticsDailySubmenu   = false;
   state.inStatisticsDetailsSubmenu = false;
   state.inConfigSubmenu            = false;
 
@@ -272,7 +296,7 @@ void setup() {
     } else {
       // Get current day of year to use as current EEPROM address,
       // also check date and time for sanity
-      getCurrentDayOfYear();
+      getCurrentDate();
 
       // Ensure tomorrow's cell is empty or can be safely overwritten
       validateNextDayCell();
@@ -401,7 +425,7 @@ void loop() {
             // Calculate statistics
             calculateStatistics();
           } else if (mainMenuMode == SPRINT) {
-            // Prepare to show daily sprints
+            // Prepare to show today sprints
             startAnimation();
           }
 
@@ -759,8 +783,8 @@ uint8_t calculateDOW(uint16_t year, uint8_t month, uint8_t day) {
   return dow == 0 ? 7 : dow;
 }
 
-// Get current day number
-void getCurrentDayOfYear() {
+// Get current date (DoY, DoW, month and year)
+void getCurrentDate() {
   Ds1302::DateTime now;
   rtc.getDateTime(&now);
   Serial.println(F("Debug (RTC): Delay before getting current day of year"));
@@ -783,11 +807,61 @@ void getCurrentDayOfYear() {
     currentDayOfYear = dayOfYear;
     Serial.print(F("Debug (sprint): Current day of year: "));
     Serial.println(currentDayOfYear);
+
+    currentDayOfWeek = now.dow;
+    Serial.print(F("Debug (sprint): Current DoW: "));
+    Serial.println(currentDayOfWeek);
+
+    currentMonth = now.month;
+    Serial.print(F("Debug (sprint): Current month: "));
+    Serial.println(currentMonth);
+
+    currentYear = 2000 + now.year;
+    Serial.print(F("Debug (sprint): Current year: "));
+    Serial.println(currentYear);
   } else {
     Serial.println(F("Error (#02): RTC isn't sane, invalid datetime"));
     errorCode = 2;
     operatingState = ERROR;
   }
+}
+
+// Get requested date from day of year
+void getDateFromDayOfYear(uint16_t inputDayOfYear, char *formattedString) {
+  // Determine year for requested day
+  uint16_t year = (inputDayOfYear <= currentDayOfYear) ? currentYear : currentYear - 1;
+
+  uint16_t day = inputDayOfYear;
+  uint8_t month = 1;
+
+  // Compute month and day
+  while (day > getDaysInMonth(year, month)) {
+      day -= getDaysInMonth(year, month);
+      month++;
+  }
+
+  sprintf(formattedString, "%02u.%02u", day, month);
+}
+
+// Get day-of-year range for given month
+void getMonthDayOfYearRange(uint16_t year, uint8_t month, int &startDay, int &endDay) {
+    startDay = 1;
+    for (uint8_t m = 1; m < month; m++) {
+        startDay += getDaysInMonth(year, m);
+    }
+
+    endDay = startDay + getDaysInMonth(year, month) - 1;
+}
+
+// Get number of days in given month
+uint8_t getDaysInMonth(uint16_t year, uint8_t month) {
+    static const uint8_t dim[12] = {
+      31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31
+    };
+
+    if (month == 2 && isLeapYear(year)) return 29;
+
+    return dim[month - 1];
 }
 
 // Check RTC date and time for sanity
@@ -813,10 +887,7 @@ bool isRtcDateTimeSane(Ds1302::DateTime now) {
   if (now.month < 1 || now.month > 12) return false;
 
   // Check day of month
-  uint8_t daysInMonth[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
-  if (isLeapYear(2000 + now.year) && now.month == 2) daysInMonth[1] = 29;
-
-  if (now.day < 1 || now.day > daysInMonth[now.month - 1]) return false;
+  if (now.day < 1 || now.day > getDaysInMonth(2000 + now.year, now.month)) return false;
 
   // Check hours, minutes, seconds
   if (now.hour > 23 || now.minute > 59 || now.second > 59) return false;
@@ -894,6 +965,29 @@ void setDateTime(byte btn) {
       initialized = false;
       operatingState = STANDBY;
       errorCode = 0;
+
+      // Update current date
+      getCurrentDate();
+
+      // Clear end byte signatures (if any)
+      for (int address = 2; address <= 367; address++) {
+        if (EEPROM.read(address) == SPRINTS_END_BYTE && address != currentDayOfYear + 1) {
+          Serial.print(F("Debug (RTC): Clear stray SPRINTS_END_BYTE signature from cell "));
+          Serial.println(address);
+          EEPROM.update(address, EMPTY_VALUE);
+        }
+      }
+
+      // Update sprintCounter
+      if (EEPROM.read(currentDayOfYear) != EMPTY_VALUE) {
+        sprintCounter = EEPROM.read(currentDayOfYear);
+      } else {
+        sprintCounter = 0;
+      }
+
+      // Save end byte signature
+      EEPROM.update(currentDayOfYear + 1, SPRINTS_END_BYTE);
+
       MFS.blinkDisplay(DIGIT_ALL, OFF);
       return;
 
@@ -1003,8 +1097,8 @@ void validateNextDayCell() {
 // Save current sprint counter according to current day of year
 void saveSprint() {
   uint16_t initialDayOfYear = currentDayOfYear;
-  // Update current day of year
-  getCurrentDayOfYear();
+  // Update current date
+  getCurrentDate();
 
   // Ensure tomorrow's cell is empty or can be safely overwritten
   validateNextDayCell();
@@ -1047,15 +1141,29 @@ void saveSprint() {
 
 // Calculate and collect statistics data
 void calculateStatistics() {
-  // Get current day of week
-  Ds1302::DateTime now;
-  rtc.getDateTime(&now);
-  int startDow = (now.dow - (currentDayOfYear - 1) % 7 + 7) % 7;
-  int currentYear = 2000 + now.year;
+  // Get current date
+  getCurrentDate();
 
-  getStatisticsByPeriod(currentDayOfYear - 365, currentDayOfYear, startDow, YEARLY, currentYear);
-  getStatisticsByPeriod(currentDayOfYear - 30, currentDayOfYear, startDow, MONTHLY, currentYear);
-  getStatisticsByPeriod(currentDayOfYear - 7, currentDayOfYear, startDow, WEEKLY, currentYear);
+  int startDow = (currentDayOfWeek - (currentDayOfYear - 1) % 7 + 7) % 7;
+  inputDayOfYear = currentDayOfYear;
+
+  int endDay = currentDayOfYear - 1;
+  if (endDay < 1) endDay = 1;
+
+  // Rolling intervals (365, 100, 60, 30, 7 days)
+  getStatisticsByPeriod(currentDayOfYear - 365, endDay, startDow, ROLL365D, currentYear);
+  getStatisticsByPeriod(currentDayOfYear - 100, endDay, startDow, ROLL100D, currentYear);
+  getStatisticsByPeriod(currentDayOfYear - 60, endDay, startDow, ROLL60D, currentYear);
+  getStatisticsByPeriod(currentDayOfYear - 30, endDay, startDow, ROLL30D, currentYear);
+  getStatisticsByPeriod(currentDayOfYear - 7, endDay, startDow, ROLL7D, currentYear);
+
+  // Monthly intervals
+  for (uint8_t month = 1; month <= 12; month++) {
+    int startDayMonth, endDayMonth;
+
+    getMonthDayOfYearRange(currentYear, month, startDayMonth, endDayMonth);
+    getStatisticsByPeriod(startDayMonth, endDayMonth, startDow, MONTH01 + (month - 1), currentYear);
+  }
 }
 
 // Get statistics data by period
@@ -1063,55 +1171,47 @@ void getStatisticsByPeriod(int startDay, int endDay, int startDow, int period, u
   float multiplier = (config.countingUnits == 1) ? 4.16 : 10;
   int totalSprints = 0, totalDays = 0, maximum = 0, minimum = 100;
 
-  int daysInCurrentYear = isLeapYear(year) ? 366 : 365;
+  int daysInCurrentYear  = isLeapYear(year)     ? 366 : 365;
   int daysInPreviousYear = isLeapYear(year - 1) ? 366 : 365;
 
-  // Process previous year if startDay is negative
-  if (startDay < 1) {
-    int previousYearStart = daysInPreviousYear + startDay;
-    for (int i = previousYearStart; i <= daysInPreviousYear; i++) {
-      // Previous year stored at 365+index
-      uint8_t sprintCounter = EEPROM.read(i + 365);
-      if (sprintCounter == EMPTY_VALUE) continue;
+  // Calculate DoW of Jan 1 of previous year
+  int prevStartDow = (startDow - (daysInPreviousYear % 7) + 7) % 7;
+  if (prevStartDow == 0) prevStartDow = 7;
 
-    // Skip days with zero sprintCounter (if configured)
-    if (config.countingDoWs == NOT_0_DAYS && sprintCounter == 0) continue;
+  for (int day = startDay; day <= endDay; day++) {
+    int idx;
+    int dow;
 
-    // Calculate Day of Week (0 = Sunday, 6 = Saturday)
-    int dow = (startDow + (i - 1)) % 7;
-
-    // Skip specific days based on configuration
-    if ((config.countingDoWs == FIVE_DAYS && (dow == 0 || dow == 6)) || // Skip weekends
-        (config.countingDoWs == SIX_DAYS && dow == 0)) continue;        // Skip Sundays
-
-      // Accumulate statistics
-      totalSprints += sprintCounter;
-      totalDays++;
-      if (sprintCounter > maximum) maximum = sprintCounter;
-      if (sprintCounter < minimum) minimum = sprintCounter;
+    if (day >= 1) {
+      // Current year
+      idx = day;
+      dow = (startDow + (day - 1)) % 7;
+      if (dow == 0) dow = 7;
+    } else {
+      // Previous year
+      // Wrap to last year's end
+      int mappedDay = day + daysInPreviousYear;
+      idx = mappedDay;
+      dow = (prevStartDow + (mappedDay - 1)) % 7;
+      if (dow == 0) dow = 7;
     }
-    // Reset to start of current year
-    startDay = 1;
-  }
 
-  // Process the current year
-  for (int i = startDay; i <= endDay; i++) {
-    uint8_t sprintCounter = EEPROM.read(i);
+    uint8_t sprintCounter = EEPROM.read(idx);
+
+    // Skip days with empty value or zero sprintCounter (if configured)
     if (sprintCounter == EMPTY_VALUE) continue;
-
-    // Skip days with zero sprintCounter (if configured)
+    if (sprintCounter == SPRINTS_END_BYTE) continue;
     if (config.countingDoWs == NOT_0_DAYS && sprintCounter == 0) continue;
 
-    // Calculate Day of Week (0 = Sunday, 6 = Saturday)
-    int dow = (startDow + (i - 1)) % 7;
-
     // Skip specific days based on configuration
-    if ((config.countingDoWs == FIVE_DAYS && (dow == 0 || dow == 6)) || // Skip weekends
-        (config.countingDoWs == SIX_DAYS && dow == 0)) continue;        // Skip Sundays
+    if ((config.countingDoWs == FIVE_DAYS && dow >= 6) ||
+        (config.countingDoWs == SIX_DAYS  && dow == 7))
+        continue;
 
     // Accumulate statistics
     totalSprints += sprintCounter;
     totalDays++;
+
     if (sprintCounter > maximum) maximum = sprintCounter;
     if (sprintCounter < minimum) minimum = sprintCounter;
   }
@@ -1123,7 +1223,7 @@ void getStatisticsByPeriod(int startDay, int endDay, int startDow, int period, u
     statisticsArray[AVERAGE][period] = multiplier * ((float)totalSprints / totalDays);
     statisticsArray[MAXIMUM][period] = multiplier * maximum;
   } else {
-    statisticsArray[TOTAL][period] = 0;
+    statisticsArray[TOTAL][period]   = 0;
     statisticsArray[MINIMUM][period] = 0;
     statisticsArray[AVERAGE][period] = 0;
     statisticsArray[MAXIMUM][period] = 0;
@@ -1132,22 +1232,25 @@ void getStatisticsByPeriod(int startDay, int endDay, int startDow, int period, u
 
 // Clear statistics cells
 void clearStatistics() {
-  Serial.println("EEPROM: Clearing all statistics");
-  for (uint16_t i = 0; i < 367; i++) {
+  Serial.println(F("EEPROM: Clearing all statistics"));
+  for (uint16_t i = 0; i <= 367; i++) {
     if (EEPROM.read(i) != EMPTY_VALUE) {
-      Serial.print("EEPROM: Clearing cell: ");
+      Serial.print(F("EEPROM: Clearing cell: "));
       Serial.println(i);
       EEPROM.update(i, EMPTY_VALUE);
-      delay(5);
     }
   }
+
+  // Show success message
+  MFS.write("donz");
+  delay(2500);
 
   operatingState = STANDBY;
 
   // Return to main menu
   mainMenuMode = SPRINT;
 
-  statisticsMenuMode = DAILY;
+  statisticsMenuMode = NOW;
   state.inSubmenu = false;
 }
 
@@ -1194,6 +1297,7 @@ void subMenuSprint(byte btn) {
 // Statistics submenu
 void subMenuStatistics(byte btn) {
   char formattedString[8];
+  char formattedStringAdditional[8];
   // Hours or runs (sprints)
   char countingUnit = (config.countingUnits == 1) ? 'h' : 'r';
 
@@ -1216,33 +1320,135 @@ void subMenuStatistics(byte btn) {
     } else if (btn == BUTTON_1_SHORT_RELEASE) {
       // Return to main menu
       state.inSubmenu = false;
-      statisticsMenuMode = DAILY;
+      statisticsMenuMode = NOW;
     }
   } else {
     // Statistics submenu navigation
-    if (statisticsMenuMode == DAILY) {
-      // Daily sprints
+    if (statisticsMenuMode == NOW) {
+      // Today sprints
       runAnimation(0);
-    } else if (statisticsMenuMode == TOTAL || statisticsMenuMode == MINIMUM || statisticsMenuMode == AVERAGE || statisticsMenuMode == MAXIMUM) {
-      if (!state.inStatisticsDetailsSubmenu) {
-        strcpy_P(formattedString, statisticsPeriods[statisticsPeriod]);
+    } else if (statisticsMenuMode == DAILY) {
+      // Daily sprints
+      if (!state.inStatisticsDailySubmenu) {
+        getDateFromDayOfYear(inputDayOfYear, formattedString);
+        getDateFromDayOfYear(currentDayOfYear, formattedStringAdditional);
+
+        if (strcmp(formattedString, formattedStringAdditional) == 0) {
+          inputDayOfYear--;
+
+          if (inputDayOfYear < 1) {
+            inputDayOfYear = isLeapYear(currentYear - 1) ? 366 : 365;
+          }
+
+          getDateFromDayOfYear(inputDayOfYear, formattedString);
+        }
+
         MFS.write(formattedString);
 
         if (btn == BUTTON_2_SHORT_RELEASE) {
-          // Cycle to next period item
-          statisticsPeriod = (statisticsPeriod + 1) % STATISTICS_PERIODS_COUNT;
+          // Move to previous date
+          inputDayOfYear--;
+
+          if (inputDayOfYear < 1) {
+            inputDayOfYear = isLeapYear(currentYear - 1) ? 366 : 365;
+
+            if (inputDayOfYear <= currentDayOfYear) {
+                inputDayOfYear = currentDayOfYear + 1;
+            }
+          }
+        } else if (btn == BUTTON_2_LONG_PRESSED) {
+          // Fast move to previous date
+          inputDayOfYear = inputDayOfYear - 10;
+
+          if (inputDayOfYear < 10) {
+            inputDayOfYear = isLeapYear(currentYear - 1) ? 366 : 365;
+
+            if (inputDayOfYear <= currentDayOfYear) {
+                inputDayOfYear = currentDayOfYear + 10;
+            }
+          }
+        } else if (btn == BUTTON_3_SHORT_RELEASE) {
+          // Statistics daily submenu navigation flag
+          state.inStatisticsDailySubmenu = true;
+        }
+      } else {
+        uint8_t eepromValue = EEPROM.read(inputDayOfYear);
+
+        float multiplier = (countingUnit == 'h') ? 0.416 : 1;
+        float calculatedValue = 0;
+
+        if (eepromValue != EMPTY_VALUE && eepromValue != SPRINTS_END_BYTE) {
+          calculatedValue = multiplier * eepromValue;
+        }
+
+        if (countingUnit == 'r') {
+          snprintf(formattedString, sizeof(formattedString), "%3d%c", (int)calculatedValue, countingUnit);
+        } else {
+          // Cant use default sprintf here because of float
+          // Need to convert float to string to combine with unit
+          dtostrf(calculatedValue, 4, 1, formattedString);
+          snprintf(formattedString, sizeof(formattedString), "%4s%c", formattedString, countingUnit);            
+        }
+
+        MFS.write(formattedString);
+      }
+
+    } else if (statisticsMenuMode != CLEAR) {
+      if (!state.inStatisticsDetailsSubmenu) {
+        // Show current statistics period
+        if (statisticsPeriod <= ROLL7D) {
+          // Rolling interval (365/100/60/30/7 days)
+          if (statisticsPeriod == ROLL365D) {
+              uint16_t days = isLeapYear(currentYear) ? 366 : 365;
+              sprintf(formattedString, "%3ud", days);
+          } else {
+              strcpy_P(formattedString, statisticsPeriods[statisticsPeriod]);
+          }
+        } else {
+          // Monthly interval
+          uint8_t menuMonth = statisticsPeriod - MONTH01 + 1;
+
+          if (menuMonth == currentMonth) {
+            // Skip current (incomplete) month
+            formattedString[0] = '\0';
+          } else {
+            uint16_t displayYear = currentYear;
+
+            if (menuMonth > currentMonth) {
+              // Data for months later than current month exists only for previous year
+              displayYear--;
+            }
+
+            sprintf(formattedString, "%02d.%02d", menuMonth, displayYear % 100);
+          }
+        }
+
+        if (formattedString[0] != '\0') {
+          MFS.write(formattedString);
+        }
+
+        if (btn == BUTTON_2_SHORT_RELEASE) {
+          // Cycle to next period item, skipping current (incomplete) month
+          do {
+              statisticsPeriod = (statisticsPeriod + 1) % STATISTICS_PERIODS_COUNT;
+          } while (
+              statisticsPeriod >= MONTH01 && statisticsPeriod <= MONTH12 &&
+              (statisticsPeriod - MONTH01 + 1) == currentMonth
+          );
+
         } else if (btn == BUTTON_3_SHORT_RELEASE) {
           // Statistics details submenu navigation flag
           state.inStatisticsDetailsSubmenu = true;
         }
       } else {
-        float value = statisticsArray[statisticsMenuMode][statisticsPeriod] / 10.0;
+        float calculatedValue = statisticsArray[statisticsMenuMode][statisticsPeriod] / 10.0;
+
         if (statisticsMenuMode == TOTAL) {
-          snprintf(formattedString, sizeof(formattedString), "%3d%c", (int)value, countingUnit);
+          snprintf(formattedString, sizeof(formattedString), "%3d%c", (int)calculatedValue, countingUnit);
         } else {
           // Cant use default sprintf here because of float
           // Need to convert float to string to combine with unit
-          dtostrf(value, 4, 1, formattedString);
+          dtostrf(calculatedValue, 4, 1, formattedString);
           snprintf(formattedString, sizeof(formattedString), "%4s%c", formattedString, countingUnit);
         }
 
@@ -1251,13 +1457,14 @@ void subMenuStatistics(byte btn) {
     }
 
     if (btn == BUTTON_1_SHORT_RELEASE) {
-      if (!state.inStatisticsDetailsSubmenu) {
+      if (!state.inStatisticsDetailsSubmenu && !state.inStatisticsDailySubmenu) {
         // Return to main menu
         state.inStatisticsSubmenu = false;
-        statisticsPeriod = YEARLY;
+        statisticsPeriod = ROLL365D;
       } else {
         // Return to prev menu
         state.inStatisticsDetailsSubmenu = false;
+        state.inStatisticsDailySubmenu = false;
       }
     }
   }
