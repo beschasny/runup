@@ -128,6 +128,7 @@ enum ConfigMenuModes {
   HERO,
   SLEEP,
   BUILD,
+  INFO,
   SUBMENU_CONFIG_MODES_COUNT
 };
 enum CountedDoW {
@@ -188,7 +189,8 @@ const char configMenuItems[][6] PROGMEM       = {
   "cnt.u", // Counting units
   "hzro",  // Hero mode
   "hbrn",  // Sleep (hibernation)
-  "bu{d"   // Build version
+  "bu{d",  // Build version
+  "info"   // Author information
 };
 const char countedDoWItems[][6] PROGMEM       = {
   "1-5d",  // Mon-Fri
@@ -1701,8 +1703,16 @@ void subMenuConfig(byte btn) {
       MFS.write(formattedString);
 
       if (btn == BUTTON_3_SHORT_RELEASE || btn == BUTTON_1_SHORT_RELEASE) {
-        // Save or cancel
-        toggleConfig(btn);
+        // Return to config menu
+        state.inConfigSubmenu = false;
+      }
+    } else if (configMenuMode == INFO) {
+      // Author information
+      scrollMessage("GItHUB CO|I BESCHASNY");
+
+      if (btn == BUTTON_3_SHORT_RELEASE || btn == BUTTON_1_SHORT_RELEASE) {
+        // Return to config menu
+        state.inConfigSubmenu = false;
       }
     }
   }
@@ -1877,6 +1887,84 @@ void blinkAlert(const char messages[][6], uint8_t blinkCount, uint16_t blinkDela
   }
 
   turnOffBlinkAndLeds();
+}
+
+// Scrolling text animation
+void scrollMessage(const char* message) {
+  static unsigned long previousMillis = 0;
+  static int scrollIndex = 0;
+  static const char* lastMessage = nullptr;
+  static bool edgePauseActive = false;
+  static unsigned long edgePauseMillis = 0;
+  static bool firstFourCharsDisplayed = false;
+
+  const unsigned long scrollInterval = 300; // ms between scroll steps
+  const unsigned long edgePause = 500;      // ms pause at start and restart
+
+  unsigned long currentMillis = millis();
+
+  int messageLength = strlen(message);
+  int maxScrollIndex = messageLength;
+
+  // Detect new message and reset everything
+  if (message != lastMessage) {
+    scrollIndex = 0;
+    lastMessage = message;
+    edgePauseActive = true;
+    edgePauseMillis = currentMillis;
+    firstFourCharsDisplayed = false;
+
+    // Show first 4 chars
+    char displayBuffer[5] = "    ";
+    for (int i = 0; i < 4; i++) {
+      displayBuffer[i] = (i < messageLength) ? message[i] : ' ';
+    }
+    MFS.write(displayBuffer);
+
+    return;
+  }
+
+  // Handle edge pause if needed
+  if (edgePauseActive) {
+    if (currentMillis - edgePauseMillis >= edgePause) {
+      edgePauseActive = false;
+      previousMillis = currentMillis;
+    } else {
+      return;
+    }
+  }
+
+  if (currentMillis - previousMillis >= scrollInterval) {
+    previousMillis = currentMillis;
+
+    // Build and display the 4-char window
+    char displayBuffer[5] = "    ";
+    for (int i = 0; i < 4; i++) {
+      int charIndex = scrollIndex + i;
+      displayBuffer[i] = (charIndex < messageLength) ? message[charIndex] : ' ';
+    }
+    MFS.write(displayBuffer);
+
+    // If first four characters are displayed, ensure a pause
+    if (scrollIndex == 0 && !firstFourCharsDisplayed) {
+      edgePauseActive = true;
+      edgePauseMillis = currentMillis;
+      firstFourCharsDisplayed = true;
+    }
+
+    // Update scroll index
+    scrollIndex++;
+
+    // If fully cleared, reset and trigger restart pause
+    if (scrollIndex > maxScrollIndex) {
+      scrollIndex = 0;
+      edgePauseActive = true;
+      edgePauseMillis = currentMillis;
+
+      // Reset so next cycle pauses
+      firstFourCharsDisplayed = false;
+    }
+  }
 }
 
 // ---- LEDs Handling ----
