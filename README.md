@@ -4,7 +4,7 @@
 
 Pomodoro timer implementation for **Arduino Uno R3** (or compatible) using a **Multifunction Shield** and a **DS1302 RTC module**. It helps manage work in focused sprints, track productivity with daily historical statistics stored in EEPROM and customize timer behavior with various settings.
 
-The runUp device is easy to assemble and requires no soldering. It uses widely available, low-cost components, making it accessible for hobbyists and beginners. The Multifunction Shield plugs directly onto the Arduino Uno, and the DS1302 RTC module connects via simple jumper wires.
+The runUp device is easy to assemble and requires no soldering. It uses widely available, low-cost components, making it accessible for hobbyists and beginners. The Multifunction Shield plugs directly onto the Arduino Uno and the DS1302 RTC module connects via simple jumper wires.
 
 The device can be placed into a simple DIY enclosure. Using two transparent acrylic Arduino Uno cases, hex standoffs, bamboo sushi stick and heat-shrink tubing, you can easily build a good-looking case.
 
@@ -12,7 +12,7 @@ The device can be placed into a simple DIY enclosure. Using two transparent acry
 
 ### Sprint sessions
 
-The runUp device follows the classic [Pomodoro technique](https://en.wikipedia.org/wiki/Pomodoro_Technique). Work sessions last **25 minutes**, during which you should focus solely on your task without distractions. Short **5-minute** breaks occur between each session, and after every **four** completed sessions, a longer **15-minute** break is taken. This cycle repeats continuously to help maintain focus and productivity.
+The runUp device follows the classic [Pomodoro technique](https://en.wikipedia.org/wiki/Pomodoro_Technique). Work sessions last **25 minutes**, during which you should focus solely on your task without distractions. Short **5-minute** breaks occur between each session and after every **four** completed sessions, a longer **15-minute** break is taken. This cycle repeats continuously to help maintain focus and productivity.
 
 | Session Type      | Duration | Notes                                      |
 |-------------------|----------|--------------------------------------------|
@@ -30,7 +30,7 @@ The runUp device follows the classic [Pomodoro technique](https://en.wikipedia.o
 
 There are **one-click modes**: temporary modes activated while the device is powered on with a simple button hold. These modes are not saved, so there is no need to manually toggle settings in the configuration menu. Once the device is turned off, the temporary modes are reset.
 
-- **Silent mode**: turns off all sound
+- **Silent mode**: turns off all sounds
 - **No-music mode**: turns off melody playback but keeps simple beeps
 - **Hero mode**: repeats 25-minute work sessions without breaks
 
@@ -38,7 +38,7 @@ There are also customizable settings that can be saved in EEPROM through the con
 
 - **Display**: 4 brightness levels
 - **Sound**: silent mode, simple beeps or melody playback
-- **Tune**: 8 built-in melodies for work session completion
+- **Tune**: 14 built-in melodies for work session completion
 - **Reminders**: beeps during pauses or breaks
 - **LED**: progress indication via flickering light
 - **Statistics**: flexible calculation logic with selectable units (hours or sprints)
@@ -142,7 +142,7 @@ Cut the sushi sticks into 4 pieces: 3 for the MFS bottom buttons (about **14 mm*
 
 Exact dimensions may vary depending on your specific board, so remember: **measure twice, cut once**. Each button rod should extend roughly **1-2 mm** above the front surface of the enclosure, because if the rods are too short or too tall, pressing them will be difficult.
 
-Once you have finished sizing the rods, use a utility knife to make small recesses on the bottom side of each rod — this will make them more stable when mounted on the MFS buttons. Then slide a heat-shrink tube onto each rod (inner diameter **6 mm**), leaving about **3 mm** length exposed at the top, and use a lighter to shrink the tube. This will hold the rods in place so they won't fall out if you turn your device upside down.
+Once you have finished sizing the rods, use a utility knife to make small recesses on the bottom side of each rod — this will make them more stable when mounted on the MFS buttons. Then slide a heat-shrink tube onto each rod (inner diameter **6 mm**), leaving about **3 mm** length exposed at the top and use a lighter to shrink the tube. This will hold the rods in place so they won't fall out if you turn your device upside down.
 
 ![Assembly step 3: Preparing the button rods](docs/assembly/step-3-button-rods.png)
 
@@ -158,7 +158,7 @@ Use a utility knife and a flat file to adjust the walls at the marked positions 
 
 #### Step 5: Final look
 
-After routing the jumper wire and assembling the enclosure, the device should look like this (button icons added for clarity):
+After routing the jumper wire and assembling the enclosure, the device should look like this:
 
 ![Assembly step 5: Final look](docs/assembly/step-5-runUp-device.png)
 
@@ -174,6 +174,142 @@ The runUp device uses my fork of the **Multifunction Shield library** by Kashif 
 
 ### Uploading the program
 
-After assembling the device and reading the note below, upload the program sketch via USB cable using the Arduino IDE or any other environment that supports uploading. If everything works as expected, the display will either show a diagnostic message or the first menu item, depending on your setup and initial conditions (such as the RTC module settings and EEPROM contents).
+After assembling the device and reading the note below, upload the program sketch via USB cable using the Arduino IDE or any other environment that supports uploading. If everything works as expected, the display will either show the first menu item or the date and time settings, depending on your setup and initial conditions (such as the RTC module settings and EEPROM contents).
 
 > ℹ️ **Note:** The device uses EEPROM. If your Arduino already has data stored there, you'll need to clear it for proper operation. This can be done directly with the device, as you will see later.
+
+## Usage
+
+There are 4 buttons to operate the device. The reset button `◆` is located at the top right corner and works the same way as on standard Arduino boards.
+
+At the bottom of the MFS, there are three buttons used to operate the device menu and its functions:
+
+1. **Back** `◀` : exit or cancel
+2. **Switch** `▲▼` : switch the current menu item or adjust a value
+3. **OK** `▶` : enter a menu or confirm a selection
+
+![runUp enclosure with buttons](docs/runup-enclosure-buttons.png)
+
+### First start
+
+So, if this is the first run with a fresh battery, you need to set up the current date and time for the device to work properly. In this case, after powering on, you will see the default values, with first digit blinking:
+
+<img src="docs/icons/1.svg" alt="1" width="16" /><img src="docs/icons/dot-grey.svg" alt="dot grey" height="3" width="3" /><img src="docs/icons/2.svg" alt="2" width="16" /><img src="docs/icons/dot-red.svg" alt="dot red" height="3" width="3" /><img src="docs/icons/3.svg" alt="3" width="16" /><img src="docs/icons/dot-grey.svg" alt="dot grey" height="3" width="3" /><img src="docs/icons/0.svg" alt="0" width="16" />
+
+Use the **Switch** `▲▼` button to change the first digit and press **OK** `▶` to move to the next digit to set the hours. Use the same logic to set the minutes and press **OK** `▶` again. You'll see the default values of the date and month:
+
+<img src="docs/icons/3.svg" alt="3" width="16" /><img src="docs/icons/dot-grey.svg" alt="dot grey" height="3" width="3" /><img src="docs/icons/1.svg" alt="1" width="16" /><img src="docs/icons/dot-red.svg" alt="dot red" height="3" width="3" /><img src="docs/icons/1.svg" alt="1" width="16" /><img src="docs/icons/dot-grey.svg" alt="dot grey" height="3" width="3" /><img src="docs/icons/2.svg" alt="2" width="16" />
+
+Use the **Switch** `▲▼` and **OK** `▶` buttons to change the digits, just like before. After you set the date and month, do the same to set the year (just the last 2 digits – changing the first two might make your device question reality):
+
+<img src="docs/icons/2.svg" alt="2" width="16" /><img src="docs/icons/dot-grey.svg" alt="dot grey" height="3" width="3" /><img src="docs/icons/0.svg" alt="0" width="16" /><img src="docs/icons/dot-grey.svg" alt="dot grey" height="3" width="3" /><img src="docs/icons/2.svg" alt="2" width="16" /><img src="docs/icons/dot-grey.svg" alt="dot grey" height="3" width="3" /><img src="docs/icons/5.svg" alt="5" width="16" />
+
+When you're done, press and hold the **OK** `▶` button for **2 seconds** to save your changes and exit the date and time setup.
+
+You'll then return to the main menu, which contains four top-level items: **run**, **data**, **conf** and **cloc**. Use the **Switch** `▲▼` button to cycle through the menu items, the **OK** `▶` button to enter a selected menu and the **Back** `◀` button to exit.
+
+### Sprints (**run** menu)
+
+<img src="docs/icons/r.svg" alt="r" width="16" /><img src="docs/icons/dot-grey.svg" alt="dot grey" height="3" width="3" /><img src="docs/icons/u.svg" alt="u" width="16" /><img src="docs/icons/dot-grey.svg" alt="dot grey" height="3" width="3" /><img src="docs/icons/n.svg" alt="n" width="16" /><img src="docs/icons/dot-grey.svg" alt="dot grey" height="3" width="3" /><img src="docs/icons/up-arrow.svg" alt="Up arrow" width="16" />
+
+This is one of the main menus used to start and manage sprints. Press the **OK** `▶` button to enter this menu. After a short animation showing your daily progress, you will see the timer value. If there is no active interval, the default 25-minute sprint interval is shown; otherwise, the remaining time of the current sprint is displayed.
+
+#### Start the sprint
+
+In the **run** menu, press the **OK** `▶` button to start or continue the sprint. The countdown timer will then appear on the device's screen. The four on-board LEDs show progress in blocks of four intervals: completed ones stay lit and the current one blinks. LEDs are active only if the **Flicker** setting is enabled (see [**Settings**](#settings-conf-menu)).
+
+> ℹ️ **Example:** After completing the first sprint, the first LED stays on; when the second sprint starts, the second LED blinks while the first remains lit; after completing the second sprint, both the first and second LEDs stay on and the third LED starts blinking during the third sprint. This pattern continues and after completing four intervals, the LED cycle loops again, showing progress for the next set of four sprints (we are limited to four LEDs on the device).
+
+#### Pause the sprint
+
+The best strategy is to concentrate on your work and complete the sprint without any interruptions or distractions. But life is life, so if your cat decides to stress-test your brand-new sofa or if there is an asteroid fall alert, you will probably need to pause for a minute or two. In these cases, press the **OK** `▶` button and your current sprint will be paused. Press it again to resume when ready.
+
+During a pause, the last digit on the display will blink. Also, if the **Cue** setting is enabled (see [**Settings**](#settings-conf-menu)), the buzzer will emit a short beep every minute to remind you that the sprint is paused.
+
+If you need to exit to the main menu during a pause to view statistics or change settings, your current sprint will be held until you turn off the device or resume the sprint.  
+
+#### Cancel the sprint
+
+If you need to cancel the current sprint, pause it first, then press and hold the **Back** `◀` button for **2 seconds**. After that, the device will reset the current sprint and show the default 25-minute sprint interval, keeping you in the **run** menu.
+
+<img src="docs/icons/2.svg" alt="2" width="16" /><img src="docs/icons/dot-grey.svg" alt="dot grey" height="3" width="3" /><img src="docs/icons/5.svg" alt="5" width="16" /><img src="docs/icons/dot-red.svg" alt="dot red" height="3" width="3" /><img src="docs/icons/0.svg" alt="0" width="16" /><img src="docs/icons/dot-grey.svg" alt="dot grey" height="3" width="3" /><img src="docs/icons/0.svg" alt="0" width="16" />
+
+ Press the **OK** `▶` button to start a new sprint or the **Back** `◀` button to exit to the main menu.
+
+#### Using one-click modes
+
+There are three temporary one-click modes to enhance your sprint experiance. They can be enabled or disabled only during a sprint by pressing and holding one of the buttons for **2 seconds**. These modes are temporary; they remain active only until you turn off the device or disable them manually.
+
+> ℹ️ **Example:** If there is an emergency online meeting with your very serious colleagues and *A-ha – Take On Me* does not feel like the most appropriate background music, all sounds can be temporarily disabled using the **Back** `◀` button, without opening the settings or interrupting your workflow. Once the meeting ends, you can re-enable sound using the same button.
+
+Once you press and hold the appropriate button, an information alert showing the current mode and its status (on or off) will appear on the display.
+
+#### Silent mode
+
+<img src="docs/icons/b.svg" alt="b" width="16" /><img src="docs/icons/dot-grey.svg" alt="dot grey" height="3" width="3" /><img src="docs/icons/u.svg" alt="u" width="16" /><img src="docs/icons/dot-grey.svg" alt="dot grey" height="3" width="3" /><img src="docs/icons/z.svg" alt="z" width="16" /><img src="docs/icons/dot-grey.svg" alt="dot grey" height="3" width="3" /><img src="docs/icons/z.svg" alt="z" width="16" />
+
+Press and hold the **Back** `◀` button to mute the buzzer and disable all sounds.
+
+#### No-music mode
+
+<img src="docs/icons/t.svg" alt="t" width="16" /><img src="docs/icons/dot-grey.svg" alt="dot grey" height="3" width="3" /><img src="docs/icons/u.svg" alt="u" width="16" /><img src="docs/icons/dot-grey.svg" alt="dot grey" height="3" width="3" /><img src="docs/icons/n.svg" alt="n" width="16" /><img src="docs/icons/dot-grey.svg" alt="dot grey" height="3" width="3" /><img src="docs/icons/z.svg" alt="z" width="16" />
+
+Press and hold the **Switch** `▲▼` button to turn off melody (tunes) playback while keeping simple beeps.
+
+#### Hero mode
+
+<img src="docs/icons/h.svg" alt="h" width="16" /><img src="docs/icons/dot-grey.svg" alt="dot grey" height="3" width="3" /><img src="docs/icons/z.svg" alt="z" width="16" /><img src="docs/icons/dot-grey.svg" alt="dot grey" height="3" width="3" /><img src="docs/icons/r.svg" alt="r" width="16" /><img src="docs/icons/dot-grey.svg" alt="dot grey" height="3" width="3" /><img src="docs/icons/o.svg" alt="o" width="16" />
+
+Press and hold the **OK** `▶` button to repeat 25-minute work sessions without breaks, like a hero.
+
+#### Saving the sprint
+
+After the sprint is completed, a success message is displayed on the screen with a short animation indicating your current daily progress. Once the animation finishes, the sprint counter is saved to EEPROM at the cell corresponding to the current day of the year.
+
+If the device is powered off or enters hibernation, your progress will not be lost, as it is stored in non-volatile EEPROM memory. When you turn the device back on, the latest sprint counter for the current day is restored. If no counter is saved for the current day, it starts from 0. If you skip some days, their values will also be filled with zeros for data consistency.
+
+If an interval is started near midnight and finishes the next day, the sprint counter is saved to the next day's cell. This is because progress is recorded only when the interval is completed, regardless of when it was started.
+
+### Statistics (**data** menu)
+
+<img src="docs/icons/d.svg" alt="d" width="16" /><img src="docs/icons/a.svg" alt="a" width="16" /><img src="docs/icons/t.svg" alt="t" width="16" /><img src="docs/icons/a.svg" alt="a" width="16" />
+
+This is one of the main menus used to view and manage statistical data. Press the **OK** `▶` button to enter it. The menu contains several elements showing different metrics:
+
+- **Now**:  progress for today
+- **Daily**: daily progress for any day of the year
+- **Total**, **Minimum**, **Average**, **Maximum**: calculated statistics for a selected period
+- **Clear**: erase all statistics
+
+Coming soon.
+
+### Settings (**conf** menu)
+
+<img src="docs/icons/c.svg" alt="c" width="16" /><img src="docs/icons/o.svg" alt="o" width="16" /><img src="docs/icons/n.svg" alt="n" width="16" /><img src="docs/icons/f.svg" alt="f" width="16" />
+
+Coming soon.
+
+### Date and time (**cloc** menu)
+
+<img src="docs/icons/c.svg" alt="c" width="16" /><img src="docs/icons/l.svg" alt="l" width="16" /><img src="docs/icons/o.svg" alt="o" width="16" /><img src="docs/icons/c.svg" alt="c" width="16" />
+
+Coming soon.
+
+---
+
+## Releases
+
+See [Releases](../../releases) for tagged versions.
+Current stable release: **v1.2.1**
+
+---
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
+
+---
+
+## Author
+
+👤 [beschasny](https://github.com/beschasny)
