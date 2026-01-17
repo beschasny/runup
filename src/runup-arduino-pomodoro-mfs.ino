@@ -24,9 +24,9 @@
 // https://github.com/beschasny/MultiFuncShield-Library
 #include <MultiFuncShield.h>
 
-// DS1302 RTC library
-// https://github.com/Treboada/Ds1302
-#include <Ds1302.h>
+// Arduino Library for RTCs
+// https://github.com/Makuna/Rtc
+#include <RtcDS1302.h>
 
 // Arduino built-in libraries
 #include <EEPROM.h>
@@ -40,7 +40,9 @@
 const byte rtcRstPin                          = 5;
 const byte rtcClkPin                          = 9;
 const byte rtcDatPin                          = 6;
-Ds1302 rtc(rtcRstPin, rtcClkPin, rtcDatPin);
+
+ThreeWire myWire(rtcDatPin, rtcClkPin, rtcRstPin);
+RtcDS1302<ThreeWire> Rtc(myWire);
 
 // Buzzer
 const byte buzzerPin                          = 3;
@@ -287,11 +289,11 @@ void setup() {
   state.inConfigSubmenu            = false;
 
   // Initialize RTC
-  rtc.init();
+  Rtc.Begin();
 
   // Check and get date and time (if not first run)
   if (operatingState != DATETIMESETUP) {
-    if (rtc.isHalted()) {
+    if (!Rtc.IsDateTimeValid()) {
       Serial.println(F("Error (#01): RTC is halted"));
       errorCode = 1;
       operatingState = ERROR;
@@ -334,9 +336,9 @@ void setup() {
         // New year begins
         Serial.println(F("Debug (sprint): New year begins"));
         // Get current year
-        Ds1302::DateTime now;
-        rtc.getDateTime(&now);
-        int currentYear = 2000 + now.year;
+        RtcDateTime now = Rtc.GetDateTime();
+
+        int currentYear = now.Year();
         int previousYear = currentYear - 1;
         int daysInPreviousYear = isLeapYear(previousYear) ? 366 : 365;
 
@@ -769,7 +771,7 @@ void saveConfig() {
 
 // ---- Date and Time Operations ----
 
-// Check if the year is leap
+// Check if year is leap
 bool isLeapYear(uint16_t year) {
   return (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0));
 }
@@ -787,22 +789,21 @@ uint8_t calculateDOW(uint16_t year, uint8_t month, uint8_t day) {
 
 // Get current date (DoY, DoW, month and year)
 void getCurrentDate() {
-  Ds1302::DateTime now;
-  rtc.getDateTime(&now);
+  RtcDateTime now = Rtc.GetDateTime();
   Serial.println(F("Debug (RTC): Delay before getting current day of year"));
   delay(50);
 
   if (isRtcDateTimeSane(now)) {
     uint8_t daysInMonth[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
-    uint16_t dayOfYear = now.day;
+    uint16_t dayOfYear = now.Day();
 
     // Add days from previous months
-    for (uint8_t i = 0; i < now.month - 1; i++) {
+    for (uint8_t i = 0; i < now.Month() - 1; i++) {
       dayOfYear += daysInMonth[i];
     }
 
     // Add +1 for leap year if month is after February
-    if (now.month > 2 && isLeapYear(2000 + now.year)) {
+    if (now.Month() > 2 && isLeapYear(now.Year())) {
       dayOfYear++;
     }
 
@@ -810,15 +811,17 @@ void getCurrentDate() {
     Serial.print(F("Debug (sprint): Current day of year: "));
     Serial.println(currentDayOfYear);
 
-    currentDayOfWeek = now.dow;
+    uint8_t dow = now.DayOfWeek();           // 0=Sun
+    currentDayOfWeek = (dow == 0) ? 7 : dow; // Sun -> 7
+
     Serial.print(F("Debug (sprint): Current DoW: "));
     Serial.println(currentDayOfWeek);
 
-    currentMonth = now.month;
+    currentMonth = now.Month();
     Serial.print(F("Debug (sprint): Current month: "));
     Serial.println(currentMonth);
 
-    currentYear = 2000 + now.year;
+    currentYear = now.Year();
     Serial.print(F("Debug (sprint): Current year: "));
     Serial.println(currentYear);
   } else {
@@ -867,39 +870,39 @@ uint8_t getDaysInMonth(uint16_t year, uint8_t month) {
 }
 
 // Check RTC date and time for sanity
-bool isRtcDateTimeSane(Ds1302::DateTime now) {
+bool isRtcDateTimeSane(const RtcDateTime& now) {
   Serial.println(F("Debug (RTC): calling isRtcDateTimeSane()"));
-  Serial.print(F("Debug (RTC): Now: ")); delay(10);
-  Serial.print(2000 + now.year); delay(10);
-  Serial.print(F("-")); delay(10);
-  Serial.print(now.month); delay(10);
-  Serial.print(F("-")); delay(10);
-  Serial.print(now.day); delay(10);
-  Serial.print(F(" ")); delay(10);
-  Serial.print(now.hour); delay(10);
-  Serial.print(F(":")); delay(10);
-  Serial.print(now.minute); delay(10);
-  Serial.print(F(":")); delay(10);
-  Serial.println(now.second); delay(10);
+  Serial.print(F("Debug (RTC): Now: "));
+  Serial.print(now.Year());
+  Serial.print(F("-"));
+  Serial.print(now.Month());
+  Serial.print(F("-"));
+  Serial.print(now.Day());
+  Serial.print(F(" "));
+  Serial.print(now.Hour());
+  Serial.print(F(":"));
+  Serial.print(now.Minute());
+  Serial.print(F(":"));
+  Serial.println(now.Second());
 
   // Check year range
-  if (now.year < 25 || now.year > 50) return false;
+  if (now.Year() < 2025 || now.Year() > 2050) return false;
 
   // Check month
-  if (now.month < 1 || now.month > 12) return false;
+  if (now.Month() < 1 || now.Month() > 12) return false;
 
   // Check day of month
-  if (now.day < 1 || now.day > getDaysInMonth(2000 + now.year, now.month)) return false;
+  if (now.Day() < 1 || now.Day() > getDaysInMonth(now.Year(), now.Month())) return false;
 
   // Check hours, minutes, seconds
-  if (now.hour > 23 || now.minute > 59 || now.second > 59) return false;
+  if (now.Hour() > 23 || now.Minute() > 59 || now.Second() > 59) return false;
 
   return true;
 }
 
 // Set new date and time
 void setDateTime(byte btn) {
-  // currentField: 0-9, each number corresponds to a digit:
+  // currentField: 0-9, each number corresponds to digit:
   // 0 = hour tens, 1 = hour units, 2 = minute tens, 3 = minute units,
   // 4 = day tens, 5 = day units, 6 = month tens, 7 = month units,
   // 8 = year tens, 9 = year units
@@ -920,28 +923,27 @@ void setDateTime(byte btn) {
     }
 
     // Initialize digits from RTC
-    Ds1302::DateTime now;
-    rtc.getDateTime(&now);
+    RtcDateTime now = Rtc.GetDateTime();
 
     if (isRtcDateTimeSane(now)) {
       Serial.println(F("Debug (RTC): Sane, get current values"));
-      hourTens = now.hour / 10;
-      hourUnits = now.hour % 10;
-      minuteTens = now.minute / 10;
-      minuteUnits = now.minute % 10;
-      dayTens = now.day / 10;
-      dayUnits = now.day % 10;
-      monthTens = now.month / 10;
-      monthUnits = now.month % 10;
-      yearTens = now.year / 10;
-      yearUnits = now.year % 10;
+      hourTens = now.Hour() / 10;
+      hourUnits = now.Hour() % 10;
+      minuteTens = now.Minute() / 10;
+      minuteUnits = now.Minute() % 10;
+      dayTens = now.Day() / 10;
+      dayUnits = now.Day() % 10;
+      monthTens = now.Month() / 10;
+      monthUnits = now.Month() % 10;
+      yearTens  = (now.Year() % 100) / 10;
+      yearUnits = (now.Year() % 100) % 10;
     } else {
-      // Fallback default 12:30 20.05.25
+      // Fallback default 12:30 31.12.25
       Serial.println(F("Debug (RTC): Not sane, set fallback values"));
       hourTens = 1; hourUnits = 2;
       minuteTens = 3; minuteUnits = 0;
-      dayTens = 2; dayUnits = 0;
-      monthTens = 0; monthUnits = 5;
+      dayTens = 3; dayUnits = 1;
+      monthTens = 1; monthUnits = 2;
       yearTens = 2; yearUnits = 5;
     }
     initialized = true;
@@ -954,15 +956,15 @@ void setDateTime(byte btn) {
       if (btn == BUTTON_3_LONG_PRESSED) {
         // Save new values to RTC
         Serial.println(F("Debug (RTC): Save new values"));
-        Ds1302::DateTime dt;
-        dt.hour = hourTens * 10 + hourUnits;
-        dt.minute = minuteTens * 10 + minuteUnits;
-        dt.day = dayTens * 10 + dayUnits;
-        dt.month = monthTens * 10 + monthUnits;
-        dt.year = yearTens * 10 + yearUnits;
-        dt.second = 0;
-        dt.dow = calculateDOW(2000 + dt.year, dt.month, dt.day);
-        rtc.setDateTime(&dt);
+        uint8_t hour   = hourTens   * 10 + hourUnits;
+        uint8_t minute = minuteTens * 10 + minuteUnits;
+        uint8_t day    = dayTens    * 10 + dayUnits;
+        uint8_t month  = monthTens  * 10 + monthUnits;
+        uint16_t year  = 2000 + (yearTens * 10 + yearUnits);
+        uint8_t second = 0;
+
+        RtcDateTime dt(year, month, day, hour, minute, second);
+        Rtc.SetDateTime(dt);
       }
       initialized = false;
       operatingState = STANDBY;
@@ -1736,18 +1738,17 @@ void toggleConfig(byte btn) {
 void subMenuClock(byte btn) {
   char formattedString[8];
   // Show current time
-  Ds1302::DateTime now;
-  rtc.getDateTime(&now);
+  RtcDateTime now = Rtc.GetDateTime();
 
   switch (dateTimeMode) {
     case HOURS_MINUTES:
-      sprintf(formattedString, "%02d.%02d", now.hour, now.minute);
+      sprintf(formattedString, "%02d.%02d", now.Hour(), now.Minute());
       break;
     case DAY_MONTH:
-      sprintf(formattedString, "%02d.%02d", now.day, now.month);
+      sprintf(formattedString, "%02d.%02d", now.Day(), now.Month());
       break;
     case YEAR:
-      sprintf(formattedString, "20%02d", now.year);
+      sprintf(formattedString, "%02d", now.Year());
       break;
   }
   MFS.write(formattedString);
