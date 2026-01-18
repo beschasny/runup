@@ -918,8 +918,8 @@ void setDateTime(byte btn) {
   if (!initialized) {
     switch (dateTimeMode) {
       case HOURS_MINUTES: currentField = 0; break;
-      case DAY_MONTH: currentField = 4; break;
-      case YEAR: currentField = 8; break;
+      case DAY_MONTH: currentField = 4;     break;
+      case YEAR: currentField = 8;          break;
     }
 
     // Initialize digits from RTC
@@ -927,25 +927,41 @@ void setDateTime(byte btn) {
 
     if (isRtcDateTimeSane(now)) {
       Serial.println(F("Debug (RTC): Sane, get current values"));
+
       hourTens = now.Hour() / 10;
       hourUnits = now.Hour() % 10;
+
       minuteTens = now.Minute() / 10;
       minuteUnits = now.Minute() % 10;
+
       dayTens = now.Day() / 10;
       dayUnits = now.Day() % 10;
+
       monthTens = now.Month() / 10;
       monthUnits = now.Month() % 10;
+
       yearTens  = (now.Year() % 100) / 10;
       yearUnits = (now.Year() % 100) % 10;
     } else {
       // Fallback default 12:30 31.12.25
       Serial.println(F("Debug (RTC): Not sane, set fallback values"));
-      hourTens = 1; hourUnits = 2;
-      minuteTens = 3; minuteUnits = 0;
-      dayTens = 3; dayUnits = 1;
-      monthTens = 1; monthUnits = 2;
-      yearTens = 2; yearUnits = 5;
+
+      hourTens = 1;
+      hourUnits = 2;
+
+      minuteTens = 3;
+      minuteUnits = 0;
+
+      dayTens = 3;
+      dayUnits = 1;
+
+      monthTens = 1;
+      monthUnits = 2;
+
+      yearTens = 2;
+      yearUnits = 5;
     }
+
     initialized = true;
   }
 
@@ -956,6 +972,7 @@ void setDateTime(byte btn) {
       if (btn == BUTTON_3_LONG_PRESSED) {
         // Save new values to RTC
         Serial.println(F("Debug (RTC): Save new values"));
+
         uint8_t hour   = hourTens   * 10 + hourUnits;
         uint8_t minute = minuteTens * 10 + minuteUnits;
         uint8_t day    = dayTens    * 10 + dayUnits;
@@ -978,6 +995,7 @@ void setDateTime(byte btn) {
         if (EEPROM.read(address) == SPRINTS_END_BYTE && address != currentDayOfYear + 1) {
           Serial.print(F("Debug (RTC): Clear stray SPRINTS_END_BYTE signature from cell "));
           Serial.println(address);
+
           EEPROM.update(address, EMPTY_VALUE);
         }
       }
@@ -998,50 +1016,69 @@ void setDateTime(byte btn) {
     case BUTTON_2_SHORT_RELEASE:
       // Increment current digit with clamping
       switch (currentField) {
-        case 0: // hour tens (0-2)
+        case 0: // Hour tens (0-2)
           hourTens = (hourTens + 1) % 3;
-          // clamp hourUnits max 3 if tens=2
+          // Clamp hourUnits max 3 if tens=2
           if (hourTens == 2 && hourUnits > 3) hourUnits = 3;
+
           break;
-        case 1: // hour units (0-9 or 0-3 if tens=2)
+        case 1: // Hour units (0-9 or 0-3 if tens=2)
           hourUnits = (hourUnits + 1) % 10;
           if (hourTens == 2 && hourUnits > 3) hourUnits = 0;
+
           break;
-        case 2: // minute tens (0-5)
+        case 2: // Minute tens (0-5)
           minuteTens = (minuteTens + 1) % 6;
+
           break;
-        case 3: // minute units (0-9)
+        case 3: // Minute units (0-9)
           minuteUnits = (minuteUnits + 1) % 10;
+
           break;
-        case 4: // day tens (0-3)
+        case 4: // Day tens (0-3)
           dayTens = (dayTens + 1) % 4;
+
           // Clamp dayUnits based on dayTens (max 31 days)
           if (dayTens == 3 && dayUnits > 1) dayUnits = 1;
+
           break;
-        case 5: // day units (0-9, max 1 if tens=3)
+        case 5: // Day units (0-9, max 1 if tens=3)
           dayUnits = (dayUnits + 1) % 10;
-          if (dayTens == 3 && dayUnits > 1) dayUnits = 0;
+
+          // Clamp based on tens
+          if (dayTens == 0 && dayUnits == 0) dayUnits = 1; // 01..09
+          if (dayTens == 3 && dayUnits > 1) dayUnits = 0;  // 30, 31
+
           break;
-        case 6: // month tens (0-1)
+        case 6: // Month tens (0-1)
           monthTens = (monthTens + 1) % 2;
-          // clamp month max 12
+          // Clamp month max 12
           if (monthTens == 1 && monthUnits > 2) monthUnits = 2;
+ 
           break;
-        case 7: // month units (0-9, max 2 if tens=1)
+        case 7: // Month units (0-9, max 2 if tens=1)
           monthUnits = (monthUnits + 1) % 10;
-          if (monthTens == 1 && monthUnits > 2) monthUnits = 0;
+
+          // Clamp based on tens
+          if (monthTens == 0 && monthUnits == 0) monthUnits = 1; // 01..09
+          if (monthTens == 1 && monthUnits > 2) monthUnits = 0;  // 10, 11, 12
+
           break;
         case 8: // year tens (0-9)
           yearTens = (yearTens + 1) % 10;
+
           break;
         case 9: // year units (0-9)
           yearUnits = (yearUnits + 1) % 10;
+
           break;
       }
+
       break;
 
     case BUTTON_3_SHORT_RELEASE:
       currentField = (currentField + 1) % 10;
+
       break;
   }
 
@@ -1053,10 +1090,12 @@ void setDateTime(byte btn) {
   } else {
     sprintf(formattedString, "20%d%d", yearTens, yearUnits);
   }
+
   MFS.write(formattedString);
 
-  // Blink only the current digit
+  // Blink only current digit
   MFS.blinkDisplay(DIGIT_ALL, OFF);
+
   // Map currentField to actual digit positions on display (0..3)
   if (currentField <= 3) {
     MFS.blinkDisplay(1 << currentField, ON);
