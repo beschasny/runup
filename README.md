@@ -281,7 +281,47 @@ This is one of the main menus used to view and manage statistical data. Press th
 - **Total**, **Minimum**, **Average**, **Maximum**: calculated statistics for a selected period
 - **Clear**: erase all statistics
 
-Coming soon.
+The device currently uses 366 EEPROM cells to store sprint data, one cell for each day of the year. If you use the device for more than a year, older data will be overwritten.
+
+Statistical data calculation depends on a setting called **Counted Days of Week** (**cnt.d** in the [**Settings**](#settings-conf-menu)). This setting defines which days of the week are included in the calculation (weekdays, weekends or all non-zero day).
+
+All statistics are displayed in the selected counting unit (sprints or hours). This can be changed using the **Count Units** setting (**cnt.u** in the [**Settings**](#settings-conf-menu)).
+
+#### Today statistics (**now** submenu)
+
+<img src="docs/icons/n.svg" alt="n" width="16" /><img src="docs/icons/o.svg" alt="o" width="16" /><img src="docs/icons/ii.svg" alt="ii" width="16" /><img src="docs/icons/i-right.svg" alt="i-right" width="16" />
+
+The **now** submenu displays your current statistics for today, automatically cycling between sprint count and total hours every 1.5 seconds. To exit this submenu (as well as any other submenu, since this behavior is consistent), press the **Back** `◀` button.
+
+#### Per-day statistics (**daily** submenu)
+
+<img src="docs/icons/d.svg" alt="d" width="16" /><img src="docs/icons/a.svg" alt="a" width="16" /><img src="docs/icons/il.svg" alt="il" width="16" /><img src="docs/icons/u.svg" alt="u" width="16" />
+
+The **daily** submenu displays your statistics for any day of the year except today. After entering this menu, use the **Switch** `▲▼` button to select a specific date, then press the **OK** `▶` button to view it and the **Back** `◀` button to exit.
+
+For faster date selection, press and hold the **Switch** `▲▼` button. Dates scroll backward, starting from yesterday and moving further into the past.
+
+#### Period-based statistics (**totl**, **min**, **mid**, **max** submenus)
+
+<img src="docs/icons/t.svg" alt="t" width="16" /><img src="docs/icons/o.svg" alt="o" width="16" /><img src="docs/icons/t.svg" alt="t" width="16" /><img src="docs/icons/l.svg" alt="l" width="16" /><img src="docs/icons/empty.svg" alt="empty" width="16" /><img src="docs/icons/empty.svg" alt="empty" width="16" /><img src="docs/icons/ii.svg" alt="ii" width="16" /><img src="docs/icons/i.svg" alt="i" width="16" /><img src="docs/icons/i.svg" alt="i" width="16" /><img src="docs/icons/n.svg" alt="n" width="16" /><img src="docs/icons/empty.svg" alt="empty" width="16" /><img src="docs/icons/empty.svg" alt="empty" width="16" /><img src="docs/icons/ii.svg" alt="ii" width="16" /><img src="docs/icons/i.svg" alt="i" width="16" /><img src="docs/icons/i.svg" alt="i" width="16" /><img src="docs/icons/d.svg" alt="d" width="16" /><img src="docs/icons/empty.svg" alt="empty" width="16" /><img src="docs/icons/empty.svg" alt="empty" width="16" /><img src="docs/icons/ii.svg" alt="ii" width="16" /><img src="docs/icons/i.svg" alt="i" width="16" /><img src="docs/icons/a.svg" alt="a" width="16" /><img src="docs/icons/x.svg" alt="x" width="16" />
+
+There are four submenus with the same logic, so they are grouped into a single section here:
+
+- Total statistics by period (**totl** submenu)
+- Minimum statistics by period (**min** submenu)
+- Average statistics by period (**mid** submenu)
+- Maximum statistics by period (**max** submenu)
+
+In any of these submenus, use the **Switch** `▲▼` button to select a period, then press the **OK** `▶` button to view it. These submenus display different types of statistics – total, minimum, average and maximum values – for the following periods:
+
+- Rolling 365 days
+- Rolling 100 days
+- Rolling 60 days
+- Rolling 30 days
+- Rolling 7 days
+- A specific month
+
+> ℹ️ **Note:** If you have been using the device for a long time, its memory may be full and older data will be overwritten as intended. For example, if it is currently June and you try to view August data, the device cannot show future data, so it interprets it as past data and displays the same period from last year (if the device was in use at that time).
 
 ### Settings (**conf** menu)
 
