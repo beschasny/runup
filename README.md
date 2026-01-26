@@ -22,36 +22,36 @@ The runUp device follows the classic [Pomodoro technique](https://en.wikipedia.o
 
 ### Statistics tracking
 
+The [**Statistics menu**](#statistics-data-menu) contains statistical data that allows you to track your progress.
+
 - Saves the number of completed sprints per day in EEPROM
-- Provides weekly, monthly and yearly overview of your progress
-- Shows statistics with minimum, average and maximum sprint counts
+- Provides flexible periods for calculated statistics, including daily, monthly, and yearly data
+- Shows statistics with minimum, average and maximum values
 
 ### Customizable settings
 
-There are **one-click modes**: temporary modes activated while the device is powered on with a simple button hold. These modes are not saved, so there is no need to manually toggle settings in the configuration menu. Once the device is turned off, the temporary modes are reset.
+There are **one-click modes**: temporary modes activated while the device is powered on with a simple button hold. These modes are not saved, so there is no need to manually toggle settings in the [**Configuration menu**](#settings-conf-menu). Once the device is turned off, the temporary modes are reset.
 
 - **Silent mode**: turns off all sounds
 - **No-music mode**: turns off melody playback but keeps simple beeps
 - **Hero mode**: repeats 25-minute work sessions without breaks
 
-There are also customizable settings that can be saved in EEPROM through the configuration menu:
+There are also customizable settings that can be saved in EEPROM through the **Configuration menu**:
 
 - **Display**: 4 brightness levels
-- **Sound**: silent mode, simple beeps or melody playback
-- **Tune**: 14 built-in melodies for work session completion
+- **Sound**: silent mode, simple beeps or 14 built-in melodies
 - **Reminders**: beeps during pauses or breaks
 - **LED**: progress indication via flickering light
 - **Statistics**: flexible calculation logic with selectable units (hours or sprints)
-  - All days of the week
-  - Monday–Friday
-  - Monday–Saturday
-  - Only days with non-zero sprints
+  - Only weekdays
+  - Weekdays and weekends
+  - All non-zero days
 - **Hero mode**: repeats 25-minute work sessions without breaks
-- **Sleep mode**: reduces power consumption with the display off
+- **Sleep mode**: reduces power consumption
 
 ### Date and time handling
 
-The RTC (real-time clock) module keeps track of the current date and time even when the device is powered off. The date and time can be set through the Clock menu, making it easy to monitor daily progress and align work sessions with real-world schedules.
+The RTC (real-time clock) module keeps track of the current date and time even when the device is powered off. The date and time can be set through the [**Clock menu**](#date-and-time-cloc-menu), making it easy to monitor daily progress and align work sessions with real-world schedules.
 
 ## Hardware
 
@@ -166,10 +166,10 @@ After routing the jumper wire and assembling the enclosure, the device should lo
 
 ### Libraries
 
-The runUp device uses my fork of the **Multifunction Shield library** by Kashif Baig and Cohesive Computing. It also requires the **DS1302 library** by Rafa Couto, along with the built-in Arduino libraries for EEPROM and Sleep Mode support.
+The runUp device uses my fork of the **Multifunction Shield library** by Kashif Baig and Cohesive Computing. It also requires the **Rtc library** by Michael Miller (Makuna), along with the built-in Arduino libraries for EEPROM and Sleep Mode support.
 
 - [Multifunction Shield library](https://github.com/beschasny/MultiFuncShield-Library)
-- [DS1302 RTC Module library](https://github.com/Treboada/Ds1302)
+- [RTC library](https://github.com/Makuna/Rtc)
 - Built-in: EEPROM, avr/sleep
 
 ### Uploading the program
@@ -208,7 +208,7 @@ When you're done, press and hold the **OK** `▶` button for **2 seconds** to sa
 
 You'll then return to the main menu, which contains four top-level items: **run**, **data**, **conf** and **cloc**. Use the **Switch** `▲▼` button to cycle through the menu items, the **OK** `▶` button to enter a selected menu and the **Back** `◀` button to exit.
 
-### Sprints (**run** menu)
+### Sprints (`run` menu)
 
 <img src="docs/icons/r.svg" alt="r" width="16" /><img src="docs/icons/dot-grey.svg" alt="dot grey" height="3" width="3" /><img src="docs/icons/u.svg" alt="u" width="16" /><img src="docs/icons/dot-grey.svg" alt="dot grey" height="3" width="3" /><img src="docs/icons/n.svg" alt="n" width="16" /><img src="docs/icons/dot-grey.svg" alt="dot grey" height="3" width="3" /><img src="docs/icons/up-arrow.svg" alt="Up arrow" width="16" />
 
@@ -226,7 +226,7 @@ The best strategy is to concentrate on your work and complete the sprint without
 
 During a pause, the last digit on the display will blink. Also, if the **Cue** setting is enabled (see [**Settings**](#settings-conf-menu)), the buzzer will emit a short beep every minute to remind you that the sprint is paused.
 
-If you need to exit to the main menu during a pause to view statistics or change settings, your current sprint will be held until you turn off the device or resume the sprint.  
+If you need to exit to the main menu during a pause to view statistics or change settings, your current sprint will be held until you turn off the device or resume the sprint.
 
 #### Cancel the sprint
 
@@ -270,13 +270,13 @@ If the device is powered off or enters hibernation, your progress will not be lo
 
 If an interval is started near midnight and finishes the next day, the sprint counter is saved to the next day's cell. This is because progress is recorded only when the interval is completed, regardless of when it was started.
 
-### Statistics (**data** menu)
+### Statistics (`data` menu)
 
 <img src="docs/icons/d.svg" alt="d" width="16" /><img src="docs/icons/a.svg" alt="a" width="16" /><img src="docs/icons/t.svg" alt="t" width="16" /><img src="docs/icons/a.svg" alt="a" width="16" />
 
 This is one of the main menus used to view and manage statistical data. Press the **OK** `▶` button to enter it. The menu contains several elements showing different metrics:
 
-- **Now**:  progress for today
+- **Now**: progress for today
 - **Daily**: daily progress for any day of the year
 - **Total**, **Minimum**, **Average**, **Maximum**: calculated statistics for a selected period
 - **Clear**: erase all statistics
@@ -287,13 +287,13 @@ Statistical data calculation depends on a setting called **Counted Days of Week*
 
 All statistics are displayed in the selected counting unit (sprints or hours). This can be changed using the **Count Units** setting (**cnt.u** in the [**Settings**](#settings-conf-menu)).
 
-#### Today statistics (**now** submenu)
+#### Today statistics (`now` submenu)
 
 <img src="docs/icons/n.svg" alt="n" width="16" /><img src="docs/icons/o.svg" alt="o" width="16" /><img src="docs/icons/ii.svg" alt="ii" width="16" /><img src="docs/icons/i-right.svg" alt="i-right" width="16" />
 
 The **now** submenu displays your current statistics for today, automatically cycling between sprint count and total hours every 1.5 seconds. To exit this submenu (as well as any other submenu, since this behavior is consistent), press the **Back** `◀` button.
 
-#### Per-day statistics (**daily** submenu)
+#### Per-day statistics (`daily` submenu)
 
 <img src="docs/icons/d.svg" alt="d" width="16" /><img src="docs/icons/a.svg" alt="a" width="16" /><img src="docs/icons/il.svg" alt="il" width="16" /><img src="docs/icons/u.svg" alt="u" width="16" />
 
@@ -301,7 +301,7 @@ The **daily** submenu displays your statistics for any day of the year except to
 
 For faster date selection, press and hold the **Switch** `▲▼` button. Dates scroll backward, starting from yesterday and moving further into the past.
 
-#### Period-based statistics (**totl**, **min**, **mid**, **max** submenus)
+#### Period-based statistics (`totl`, `min`, `mid`, `max` submenus)
 
 <img src="docs/icons/t.svg" alt="t" width="16" /><img src="docs/icons/o.svg" alt="o" width="16" /><img src="docs/icons/t.svg" alt="t" width="16" /><img src="docs/icons/l.svg" alt="l" width="16" /><img src="docs/icons/empty.svg" alt="empty" width="16" /><img src="docs/icons/empty.svg" alt="empty" width="16" /><img src="docs/icons/ii.svg" alt="ii" width="16" /><img src="docs/icons/i.svg" alt="i" width="16" /><img src="docs/icons/i.svg" alt="i" width="16" /><img src="docs/icons/n.svg" alt="n" width="16" /><img src="docs/icons/empty.svg" alt="empty" width="16" /><img src="docs/icons/empty.svg" alt="empty" width="16" /><img src="docs/icons/ii.svg" alt="ii" width="16" /><img src="docs/icons/i.svg" alt="i" width="16" /><img src="docs/icons/i.svg" alt="i" width="16" /><img src="docs/icons/d.svg" alt="d" width="16" /><img src="docs/icons/empty.svg" alt="empty" width="16" /><img src="docs/icons/empty.svg" alt="empty" width="16" /><img src="docs/icons/ii.svg" alt="ii" width="16" /><img src="docs/icons/i.svg" alt="i" width="16" /><img src="docs/icons/a.svg" alt="a" width="16" /><img src="docs/icons/x.svg" alt="x" width="16" />
 
@@ -312,7 +312,7 @@ There are four submenus with the same logic, so they are grouped into a single s
 - Average statistics by period (**mid** submenu)
 - Maximum statistics by period (**max** submenu)
 
-In any of these submenus, use the **Switch** `▲▼` button to select a period, then press the **OK** `▶` button to view it. These submenus display different types of statistics – total, minimum, average and maximum values – for the following periods:
+In any of these submenus, use the **Switch** `▲▼` button to select a period, then press the **OK** `▶` button to view it and the **Back** `◀` button to exit. These submenus display different types of statistics – total, minimum, average and maximum values – for the following periods:
 
 - Rolling 365 days
 - Rolling 100 days
@@ -323,13 +323,13 @@ In any of these submenus, use the **Switch** `▲▼` button to select a period,
 
 > ℹ️ **Note:** If you have been using the device for a long time, its memory may be full and older data will be overwritten as intended. For example, if it is currently June and you try to view August data, the device cannot show future data, so it interprets it as past data and displays the same period from last year (if the device was in use at that time).
 
-### Settings (**conf** menu)
+### Settings (`conf` menu)
 
 <img src="docs/icons/c.svg" alt="c" width="16" /><img src="docs/icons/o.svg" alt="o" width="16" /><img src="docs/icons/n.svg" alt="n" width="16" /><img src="docs/icons/f.svg" alt="f" width="16" />
 
 Coming soon.
 
-### Date and time (**cloc** menu)
+### Date and time (`cloc` menu)
 
 <img src="docs/icons/c.svg" alt="c" width="16" /><img src="docs/icons/l.svg" alt="l" width="16" /><img src="docs/icons/o.svg" alt="o" width="16" /><img src="docs/icons/c.svg" alt="c" width="16" />
 
