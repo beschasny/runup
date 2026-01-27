@@ -268,14 +268,29 @@ extern const uint8_t melodiesSize;
 // -----------------------------------------------------------------
 
 void setup() {
+  // Initialize MFS
+  MFS.initialize();
+  MFS.setDisplayBrightness(3);
+
+  // Startup preloader
+  // Step 1/8
+  MFS.write("i");
   delay(100);
+
   // Make random sequence less predictable
   randomSeed(analogRead(A5));
   Serial.begin(9600);
 
+  // Step 2/8
+  MFS.write("#");
+  delay(100);
+  
   // Load config on startup
   loadConfig();
   config.muteModeEnabled           = false;
+
+  // Step 3/8
+  MFS.write("#i");
 
   // Set states
   state.isDisplayEnabled           = true;
@@ -290,6 +305,9 @@ void setup() {
 
   // Initialize RTC
   Rtc.Begin();
+
+  // Step 4/8
+  MFS.write("##");
 
   // Check and get date and time (if not first run)
   if (operatingState != DATETIMESETUP) {
@@ -306,6 +324,9 @@ void setup() {
       validateNextDayCell();
     }
   }
+
+  // Step 5/8
+  MFS.write("##i");
 
   // If no errors check if it is needed to update sprintCounter and skipped days
   if (errorCode == 0 && operatingState == STANDBY) {
@@ -377,6 +398,9 @@ void setup() {
     }
   }
 
+  // Step 6/8
+  MFS.write("###");
+
   Serial.println(F("EEPROM:"));
   for (int address = 0; address <= 1023; address++) {
     uint8_t value = EEPROM.read(address);
@@ -390,9 +414,15 @@ void setup() {
   }
   Serial.println(F("EEPROM: Finished reading"));
 
-  // Initialize MFS
-  MFS.initialize();
+  // Step 7/8
+  MFS.write("###i");
+
+  // Set MFS brightness from config
   MFS.setDisplayBrightness(config.displayBrightness);
+  delay(100);
+
+  // Step 8/8
+  MFS.write("####");
 
   // Set up button press interrupt (using pin D2 as input with internal pull-up)
   pinMode(isrPin, INPUT_PULLUP);
