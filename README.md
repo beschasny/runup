@@ -33,7 +33,7 @@ The [**Statistics menu**](#statistics-data-menu) contains statistical data that 
 There are **one-click modes**: temporary modes activated while the device is powered on with a simple button hold. These modes are not saved, so there is no need to manually toggle settings in the [**Configuration menu**](#settings-conf-menu). Once the device is turned off, the temporary modes are reset.
 
 - **Silent mode**: turns off all sounds
-- **No-music mode**: turns off melody playback but keeps simple beeps
+- **No-Music mode**: turns off melody playback but keeps simple beeps
 - **Hero mode**: repeats 25-minute work sessions without breaks
 
 There are also customizable settings that can be saved in EEPROM through the **Configuration menu**:
@@ -166,7 +166,7 @@ After routing the jumper wire and assembling the enclosure, the device should lo
 
 ### Libraries
 
-The runUp device uses my fork of the **Multifunction Shield library** by Kashif Baig and Cohesive Computing. It also requires the **Rtc library** by Michael Miller (Makuna), along with the built-in Arduino libraries for EEPROM and Sleep Mode support.
+The runUp device uses my fork of the **Multifunction Shield library** by Kashif Baig and Cohesive Computing. It also requires the **Rtc library** by Michael Miller (Makuna), along with the built-in Arduino libraries for EEPROM and Sleep mode support.
 
 - [Multifunction Shield library](https://github.com/beschasny/MultiFuncShield-Library)
 - [RTC library](https://github.com/Makuna/Rtc)
@@ -180,7 +180,7 @@ After assembling the device and reading the note below, upload the program sketc
 
 ## Usage
 
-There are 4 buttons to operate the device. The reset button `◆` is located at the top right corner and works the same way as on standard Arduino boards.
+There are 4 buttons to operate the device. The **Reset** `◆` button is located at the top right corner and works the same way as on standard Arduino boards.
 
 At the bottom of the MFS, there are three buttons used to operate the device menu and its functions:
 
@@ -190,9 +190,13 @@ At the bottom of the MFS, there are three buttons used to operate the device men
 
 ![runUp enclosure with buttons](docs/runup-enclosure-buttons.png)
 
-### First start
+### First run
 
-So, if this is the first run with a fresh battery, you need to set up the current date and time for the device to work properly. In this case, after powering on, you will see the default values, with first digit blinking:
+If this is the first run with a fresh battery, you need to set up the current date and time for the device to work properly.
+
+> ℹ️ **Note:** In rare cases, the RTC may fail to set the date and time on the first attempt. This can happen if the RTC has not yet synchronized or if write protection is enabled. If this occurs, an error message will be shown. To fix the issue and set the correct date and time, see the [**Error handling**](#error-handling) section.
+
+If everything works correctly, after powering on you will see the default values, with the first digit blinking:
 
 <img src="docs/icons/1.svg" alt="1" width="16" /><img src="docs/icons/dot-grey.svg" alt="dot grey" height="3" width="3" /><img src="docs/icons/2.svg" alt="2" width="16" /><img src="docs/icons/dot-red.svg" alt="dot red" height="3" width="3" /><img src="docs/icons/3.svg" alt="3" width="16" /><img src="docs/icons/dot-grey.svg" alt="dot grey" height="3" width="3" /><img src="docs/icons/0.svg" alt="0" width="16" />
 
@@ -216,7 +220,7 @@ This is one of the main menus used to start and manage sprints. Press the **OK**
 
 #### Start the sprint
 
-In the **run** menu, press the **OK** `▶` button to start or continue the sprint. The countdown timer will then appear on the device's screen. The four on-board LEDs show progress in blocks of four intervals: completed ones stay lit and the current one blinks. LEDs are active only if the **Flicker** setting is enabled (see [**Settings**](#settings-conf-menu)).
+In the **run** menu, press the **OK** `▶` button to start or continue the sprint. The countdown timer will then appear on the device's screen. The four on-board LEDs show progress in blocks of four intervals: completed ones stay lit and the current one blinks. LEDs are active only if the **Flicker** setting is enabled (see [**LED Indication**](#led-indication-flicr-submenu)).
 
 > ℹ️ **Example:** After completing the first sprint, the first LED stays on; when the second sprint starts, the second LED blinks while the first remains lit; after completing the second sprint, both the first and second LEDs stay on and the third LED starts blinking during the third sprint. This pattern continues and after completing four intervals, the LED cycle loops again, showing progress for the next set of four sprints (we are limited to four LEDs on the device).
 
@@ -224,7 +228,7 @@ In the **run** menu, press the **OK** `▶` button to start or continue the spri
 
 The best strategy is to concentrate on your work and complete the sprint without any interruptions or distractions. But life is life, so if your cat decides to stress-test your brand-new sofa or if there is an asteroid fall alert, you will probably need to pause for a minute or two. In these cases, press the **OK** `▶` button and your current sprint will be paused. Press it again to resume when ready.
 
-During a pause, the last digit on the display will blink. Also, if the **Cue** setting is enabled (see [**Settings**](#settings-conf-menu)), the buzzer will emit a short beep every minute to remind you that the sprint is paused.
+During a pause, the last digit on the display will blink. Also, if the **Cue** setting is enabled (see [**Reminders**](#reminders-cue-submenu)), the buzzer will emit a short beep every minute to remind you that the sprint is paused.
 
 If you need to exit to the main menu during a pause to view statistics or change settings, your current sprint will be held until you turn off the device or resume the sprint.
 
@@ -236,7 +240,7 @@ If you need to cancel the current sprint, pause it first, then press and hold th
 
  Press the **OK** `▶` button to start a new sprint or the **Back** `◀` button to exit to the main menu.
 
-#### Using one-click modes
+#### One-Click modes
 
 There are three temporary one-click modes to enhance your sprint experiance. They can be enabled or disabled only during a sprint by pressing and holding one of the buttons for **2 seconds**. These modes are temporary; they remain active only until you turn off the device or disable them manually.
 
@@ -250,7 +254,7 @@ Once you press and hold the appropriate button, an information alert showing the
 
 Press and hold the **Back** `◀` button to mute the buzzer and disable all sounds.
 
-#### No-music mode
+#### No-Music mode
 
 <img src="docs/icons/t.svg" alt="t" width="16" /><img src="docs/icons/dot-grey.svg" alt="dot grey" height="3" width="3" /><img src="docs/icons/u.svg" alt="u" width="16" /><img src="docs/icons/dot-grey.svg" alt="dot grey" height="3" width="3" /><img src="docs/icons/n.svg" alt="n" width="16" /><img src="docs/icons/dot-grey.svg" alt="dot grey" height="3" width="3" /><img src="docs/icons/z.svg" alt="z" width="16" />
 
@@ -266,7 +270,7 @@ Press and hold the **OK** `▶` button to repeat 25-minute work sessions without
 
 After the sprint is completed, a success message is displayed on the screen with a short animation indicating your current daily progress. Once the animation finishes, the sprint counter is saved to EEPROM at the cell corresponding to the current day of the year.
 
-If the device is powered off or enters hibernation, your progress will not be lost, as it is stored in non-volatile EEPROM memory. When you turn the device back on, the latest sprint counter for the current day is restored. If no counter is saved for the current day, it starts from 0. If you skip some days, their values will also be filled with zeros for data consistency.
+If the device is powered off or enters Sleep mode, your progress will not be lost, as it is stored in non-volatile EEPROM memory. When you turn the device back on, the latest sprint counter for the current day is restored. If no counter is saved for the current day, it starts from 0. If you skip some days, their values will also be filled with zeros for data consistency.
 
 If an interval is started near midnight and finishes the next day, the sprint counter is saved to the next day's cell. This is because progress is recorded only when the interval is completed, regardless of when it was started.
 
@@ -283,9 +287,9 @@ This is one of the main menus used to view and manage statistical data. Press th
 
 The device currently uses 366 EEPROM cells to store sprint data, one cell for each day of the year. If you use the device for more than a year, older data will be overwritten.
 
-Statistical data calculation depends on a setting called **Counted Days of Week** (**cnt.d** in the [**Settings**](#settings-conf-menu)). This setting defines which days of the week are included in the calculation (weekdays, weekends or all non-zero day).
+Statistical data calculation depends on the [**Counted Days**](#counted-days-cntd-submenu) setting. This setting defines which days of the week are included in the calculation (weekdays, extended weekdays, all days or any day with recorded activity).
 
-All statistics are displayed in the selected counting unit (sprints or hours). This can be changed using the **Count Units** setting (**cnt.u** in the [**Settings**](#settings-conf-menu)).
+All statistics are displayed using the selected counting unit (number of sprint runs or hours). This can be changed using the [**Counting Units**](#counting-units-cntu-submenu) setting.
 
 #### Today statistics (`now` submenu)
 
@@ -327,11 +331,131 @@ In any of these submenus, use the **Switch** `▲▼` button to select a period,
 
 <img src="docs/icons/c.svg" alt="c" width="16" /><img src="docs/icons/o.svg" alt="o" width="16" /><img src="docs/icons/n.svg" alt="n" width="16" /><img src="docs/icons/f.svg" alt="f" width="16" />
 
-Coming soon.
+This is one of the main menus used to configure the device. Press the **OK** `▶` button to enter it. The menu contains several customizable settings:
+
+- [**Display**](#display-lcd-submenu)
+- [**Buzzer**](#buzzer-buzz-submenu)
+- [**Melodies**](#melodies-tune-submenu)
+- [**Reminders**](#reminders-cue-submenu)
+- [**LED Indication**](#led-indication-flicr-submenu)
+- [**Counted Days**](#counted-days-cntd-submenu)
+- [**Counting Units**](#counting-units-cntu-submenu)
+- [**Hero mode**](#hero-mode-hero-submenu)
+- [**Sleep mode**](#sleep-mode-hbrn-submenu)
+- [**Software Build**](#software-build-build-submenu)
+- [**Author Info**](#author-info-info-submenu)
+
+Use the **Switch** `▲▼` button to select a setting and press the **OK** `▶` button to view its value. Change the value using the **Switch** `▲▼` button.
+
+Press **OK** `▶` to save the change or **Back** `◀` to exit without saving.
+
+#### Display (`lcd` submenu)
+
+<img src="docs/icons/l-right.svg" alt="l-right" width="16" /><img src="docs/icons/c.svg" alt="c" width="16" /><img src="docs/icons/d.svg" alt="d" width="16" /><img src="docs/icons/empty.svg" alt="empty" width="16" />
+
+Adjust the display brightness (4 levels) or temporarily turn the display off. To turn the display back on, press any button. Note that power consumption may increase by 2–3x when using the maximum brightness level compared to the minimum level.
+
+An attentive user may notice that the device uses a segment LED display, not a liquid crystal display (LCD). However, to keep the settings simple and familiar, the well-known LCD abbreviation is used here. In this case, you may think of it as standing for "LED Characters Display".
+
+#### Buzzer (`buzz` submenu)
+
+<img src="docs/icons/b.svg" alt="b" width="16" /><img src="docs/icons/u.svg" alt="u" width="16" /><img src="docs/icons/z.svg" alt="z" width="16" /><img src="docs/icons/z.svg" alt="z" width="16" />
+
+Enable or disable the on-board buzzer. If this setting is disabled, the device will be silent and the next two settings (**tune** and **cue**) will be hidden.
+
+If you only need **Silent mode** occasionally, it can be temporarily enabled using [**One-Click modes**](#one-click-modes).
+
+#### Melodies (`tune` submenu)
+
+<img src="docs/icons/t.svg" alt="t" width="16" /><img src="docs/icons/u.svg" alt="u" width="16" /><img src="docs/icons/n.svg" alt="n" width="16" /><img src="docs/icons/z.svg" alt="z" width="16" />
+
+Select one of 14 built-in tunes, random playback or simple beeps for work session completion. The following melodies are available and can be selected by number:
+
+1. Koji Kondo - Super Mario Bros. (Flagpole Fanfare)
+2. Koji Kondo - Super Mario Bros. (Overworld theme)
+3. Henry Mancini - Baby Elephant Walk (intro)
+4. Henry Mancini - Baby Elephant Walk (outro)
+5. Hirokazu Tanaka - Type A (Tetris)
+6. Elderbrook & Vintage Culture - Run
+7. K.Flay - Not In California
+8. Lana Del Ray - Summertime Sadness
+9. Coldplay - Clocks
+10. Metallica - Master Of Puppets
+11. Little Barrie - Better Call Saul theme
+12. Gorillaz - Clint Eastwood
+13. Fontaines D.C. - Starbuster
+14. A-Ha - Take On Me
+
+Selecting **rnd** will play a random melody. Selecting **off** will disable melodies and use simple beeps instead.
+
+If you only need **No-Music mode** occasionally, it can be temporarily enabled using [**One-Click modes**](#one-click-modes).
+
+#### Reminders (`cue` submenu)
+
+<img src="docs/icons/c.svg" alt="c" width="16" /><img src="docs/icons/u.svg" alt="u" width="16" /><img src="docs/icons/z.svg" alt="z" width="16" /><img src="docs/icons/empty.svg" alt="empty" width="16" />
+
+Enable or disable audio reminders during pauses and breaks. When enabled, the device will beep every minute while a sprint is paused or during breaks between sprints, reminding you to resume the sprint or take a rest.
+
+#### LED Indication (`flicr` submenu)
+
+<img src="docs/icons/f.svg" alt="f" width="16" /><img src="docs/icons/li.svg" alt="li" width="16" /><img src="docs/icons/c.svg" alt="c" width="16" /><img src="docs/icons/r.svg" alt="r" width="16" />
+
+Enable or disable progress indication using a flickering on-board LEDs. The indication logic is based on four intervals, as described in the [**Start the sprint**](#sprints-run-menu) section above.
+
+#### Counted Days (`cnt.d` submenu)
+
+<img src="docs/icons/c.svg" alt="c" width="16" /><img src="docs/icons/n.svg" alt="n" width="16" /><img src="docs/icons/t.svg" alt="t" width="16" /><img src="docs/icons/dot-red.svg" alt="dot red" height="3" width="3" /><img src="docs/icons/d.svg" alt="d" width="16" />
+
+Select which days are included in statistics: weekdays, extended weekdays, all days or any day with recorded activity.
+
+- **1-5d**: Monday to Friday
+- **1-6d**: Monday to Saturday
+- **1-7d**: Monday to Sunday
+- **not0**: Any day with non-zero sprints
+
+#### Counting Units (`cnt.u` submenu)
+
+<img src="docs/icons/c.svg" alt="c" width="16" /><img src="docs/icons/n.svg" alt="n" width="16" /><img src="docs/icons/t.svg" alt="t" width="16" /><img src="docs/icons/dot-red.svg" alt="dot red" height="3" width="3" /><img src="docs/icons/u.svg" alt="u" width="16" />
+
+Select the units used for statistics: number of sprint runs or hours. This setting affects statistics only. After completing a sprint, your progress will still be shown in both runs and hours.
+
+#### Hero mode (`hero` submenu)
+
+<img src="docs/icons/h.svg" alt="h" width="16" /><img src="docs/icons/z.svg" alt="z" width="16" /><img src="docs/icons/r.svg" alt="r" width="16" /><img src="docs/icons/o.svg" alt="o" width="16" />
+
+Enable or disable continuous 25-minute work sessions without breaks. When enabled, the device works as a simple work time instead of using the Pomodoro technique logic.
+
+If you only need **Hero mode** occasionally, it can be temporarily enabled using [**One-Click modes**](#one-click-modes).
+
+#### Sleep mode (`hbrn` submenu)
+
+<img src="docs/icons/h.svg" alt="h" width="16" /><img src="docs/icons/b.svg" alt="b" width="16" /><img src="docs/icons/r.svg" alt="r" width="16" /><img src="docs/icons/n.svg" alt="n" width="16" />
+
+Enable Sleep mode (hibernation) with reduced power consumption. In this mode, the device consumes **10-20 mA**, while in normal operation it consumes about **45 mA** at minimum brightness and **100+ mA** at maximum brightness.
+
+There are two ways to wake up the device: by short-circuiting the interrupt (ISR) pin `2` to any `GND` pin or by pressing the **Reset** `◆` button. Pressing **Reset** is easier, but if you have an unfinished sprint, it will be lost after the reset.
+
+#### Software Build (`build` submenu)
+
+<img src="docs/icons/b.svg" alt="b" width="16" /><img src="docs/icons/u.svg" alt="u" width="16" /><img src="docs/icons/il.svg" alt="il" width="16" /><img src="docs/icons/d.svg" alt="d" width="16" />
+
+Display the current software version installed on the device. This information can be useful when checking compatibility with the documentation, reporting issues or verifying that the firmware was updated successfully.
+
+#### Author Info (`info` submenu)
+
+<img src="docs/icons/i-right.svg" alt="i-right" width="16" /><img src="docs/icons/n.svg" alt="n" width="16" /><img src="docs/icons/f.svg" alt="f" width="16" /><img src="docs/icons/o.svg" alt="o" width="16" />
+
+Display basic information about the project author with a GitHub profile link.
 
 ### Date and time (`cloc` menu)
 
 <img src="docs/icons/c.svg" alt="c" width="16" /><img src="docs/icons/l.svg" alt="l" width="16" /><img src="docs/icons/o.svg" alt="o" width="16" /><img src="docs/icons/c.svg" alt="c" width="16" />
+
+Coming soon.
+
+---
+
+## Error handling
 
 Coming soon.
 
