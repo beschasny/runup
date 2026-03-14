@@ -279,12 +279,16 @@ void setup() {
 
   // Make random sequence less predictable
   randomSeed(analogRead(A5));
+
+  // Disable ADC for proper sleep mode operation
+  ADCSRA &= ~(1 << ADEN);
+
   Serial.begin(9600);
 
   // Step 2/8
   MFS.write("#");
   delay(100);
-  
+
   // Load config on startup
   loadConfig();
   config.muteModeEnabled           = false;
@@ -1837,6 +1841,7 @@ void wakeUpISR() {
 void sleep() {
   Serial.println(F("Debug (sleep): Preparing to sleep"));
   Serial.flush();
+
   state.isSleeping = true;
 
   // Wake up on falling edge (button press)
@@ -1844,10 +1849,12 @@ void sleep() {
 
   // Set sleep mode
   set_sleep_mode(SLEEP_MODE_PWR_DOWN);
+  cli();
   sleep_enable();
+  sei();
 
   // Enter sleep mode, waiting for interrupt
-  sleep_mode();
+  sleep_cpu();
 
   // After waking up, disable sleep mode
   sleep_disable();
