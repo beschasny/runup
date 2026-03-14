@@ -368,7 +368,6 @@ void setup() {
           Serial.print(F("Debug (sprint): Set 0 value for cell: "));
           Serial.println(i);
           EEPROM.update(i, 0);
-          delay(5);
         }
 
         Serial.println(F("Debug (sprint): Filling skipped days of new year with zeroes"));
@@ -376,7 +375,6 @@ void setup() {
           Serial.print(F("Debug (sprint): Set 0 value for cell: "));
           Serial.println(i);
           EEPROM.update(i, 0);
-          delay(5);
         }
       } else if (skippedDays > 0 && latestSavedDayOfYear > 0) {
         Serial.println(F("Debug (sprint): Filling skipped days of current year with zeroes"));
@@ -386,14 +384,12 @@ void setup() {
           Serial.println(skippedDayOfYear);
           // Fill skipped day with 0
           EEPROM.update(skippedDayOfYear, 0);
-          delay(5);
         }
       }
 
       // Save end byte signature
       if (skippedDays != 0 && latestSavedDayOfYear > 0) {
         EEPROM.update(currentDayOfYear + 1, SPRINTS_END_BYTE);
-        delay(5);
       }
     }
   }
@@ -409,7 +405,6 @@ void setup() {
       Serial.print(address);
       Serial.print(F(": "));
       Serial.println(value);
-      delay(5);
     }
   }
   Serial.println(F("EEPROM: Finished reading"));
@@ -546,7 +541,7 @@ void loop() {
         operatingState = PAUSED;
         lastPausedBeep = millis();
       } else {
-        // Show animation at the beginning of the break
+        // Show animation when break begins
         if ((currentInterval == 5 || currentInterval == 15) && !showStaticInfo) {
           //runAnimation(1500);
           runAnimation(3000);
@@ -566,7 +561,6 @@ void loop() {
 
             if (currentInterval == 15 || currentInterval == 5) {
               if (config.buzzEnabled && config.cueEnabled) {
-              //if (config.buzzEnabled) {
                 MFS.beep(5, 5, 1);
               }
             }
@@ -796,7 +790,6 @@ void initConfig() {
 void saveConfig() {
   Serial.println(F("EEPROM: Save config"));
   EEPROM.put(CONFIG_ADDRESS, config);
-  delay(5);
 }
 
 // ---- Date and Time Operations ----
@@ -1191,7 +1184,6 @@ void saveSprint() {
 
     // Save sprint counter
     EEPROM.update(currentDayOfYear, sprintCounter);
-    delay(5);
 
     // Clear end byte signatures (if any)
     for (int address = 2; address <= 367; address++) {
@@ -1199,14 +1191,11 @@ void saveSprint() {
         Serial.print(F("Debug (sprint): Clear stray SPRINTS_END_BYTE signature from cell "));
         Serial.println(address);
         EEPROM.update(address, EMPTY_VALUE);
-        delay(5);
       }
     }
 
     // Save end byte signature
     EEPROM.update(currentDayOfYear + 1, SPRINTS_END_BYTE);
-    delay(5);
-
   }
 }
 
@@ -1625,7 +1614,7 @@ void subMenuConfig(byte btn) {
               // Save new value if it differs from stored before
               saveConfig();
             } else {
-              // Turn off the display
+              // Turn off display
               state.isDisplayEnabled = false;
             }
           } else if (btn == BUTTON_1_SHORT_RELEASE) {
@@ -1877,7 +1866,7 @@ void sleep() {
 
 // ---- Animation Handling ----
 
-// Function to call once when entering the menu
+// Function to call once when entering menu
 void startAnimation() {
   animationStartTime     = millis();
   animationPrevFrameTime = animationStartTime;
@@ -1888,12 +1877,12 @@ void startAnimation() {
   showSprint = false;
 }
 
-// Function to call every loop to drive the animation
+// Function to call every loop to drive animation
 void runAnimation(unsigned long duration) {
   unsigned long now = millis();
   char formattedString[8];
 
-  // If within the animation window
+  // If within animation window
   if (duration == 0 || now - animationStartTime < duration) {
     // Draw one frame on each 100 ms tick
     if (now - animationPrevFrameTime >= 100) {
@@ -1939,20 +1928,20 @@ void blinkAlert(const char messages[][6], uint8_t blinkCount, uint16_t blinkDela
   uint8_t i = 0;
 
   while (true) {
-    // Read the message from PROGMEM
+    // Read message from PROGMEM
     strcpy_P(formattedString, messages[i]);
 
-    // Check if we reached the end (empty string)
+    // Check if we reached ending empty string
     if (formattedString[0] == '\0') break;
 
-    // Blink the message
+    // Blink message
     for (uint8_t j = 0; j < blinkCount; j++) {
       MFS.write(formattedString);
       MFS.writeLeds(LED_ALL, (j % 2 == 0) ? ON : OFF);
       delay(blinkDelay);
     }
 
-    // Move to the next message
+    // Move to next message
     i++;
   }
 
@@ -2219,7 +2208,7 @@ const int melody4[] PROGMEM = {
   NOTE_C5,   8,
 };
 
-// Tetris
+// Hirokazu Tanaka - Type A (Tetris)
 const int melody5[] PROGMEM = {
   NOTE_E5, 4,
   NOTE_B4, 8,
@@ -2475,7 +2464,7 @@ void playMelody(byte melodyId) {
     int divider = pgm_read_word_near(melody + i + 1);
     int duration = (divider > 0) ? (wholenote / divider) : (wholenote / abs(divider)) * 1.25;
 
-    // Turn off all LEDs and turn on the current one
+    // Turn off all LEDs and turn on current one
     MFS.writeLeds(LED_ALL, OFF);
     // Shift bit to control specific LED
     MFS.writeLeds(1 << (ledIndex - 1), ON);
@@ -2498,7 +2487,7 @@ void playMelody(byte melodyId) {
     MFS.beep(0, 0, 0);
   }
 
-  // Turn off all LEDs at the end
+  // Turn off all LEDs
   MFS.writeLeds(LED_ALL, OFF);
   MFS.beep(0, 0, 0);
 }
