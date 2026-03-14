@@ -234,6 +234,7 @@ int statisticsArray[SUBMENU_STATISTICS_MODES_COUNT - 1][STATISTICS_PERIODS_COUNT
 struct Config {
   byte signature;                                  // Signature to detect if EEPROM is initialized
   byte version;                                    // Version to detect updates
+  bool isDateSet                              : 1; // true/false
   byte displayBrightness                      : 4; // 0-3 (max -> min)
   bool buzzEnabled                            : 1; // true/false
   byte tune                                   : 4; // 0-10
@@ -744,6 +745,9 @@ void loadConfig() {
     initConfig();
     saveConfig();
     operatingState = DATETIMESETUP;
+  } else if (config.signature == CONFIG_SIGNATURE && config.isDateSet == false) {
+    Serial.println(F("EEPROM: config.isDateSet is false, seems like first run without date"));
+    operatingState = DATETIMESETUP;
   } else if (config.version != VERSION) {
     Serial.println(F("EEPROM: Version is changed, doing migration"));
     // Version is changed, store old config values to keep it
@@ -768,6 +772,7 @@ void loadConfig() {
 
     config.signature         = CONFIG_SIGNATURE;
     config.version           = VERSION;
+    config.isDateSet         = true;
 
     saveConfig();
   }
@@ -779,6 +784,7 @@ void initConfig() {
   Serial.println(F("EEPROM: Set default values"));
   config.signature           = CONFIG_SIGNATURE;
   config.version             = VERSION;
+  config.isDateSet           = false;
   config.displayBrightness   = 3;
   config.buzzEnabled         = true;
   config.tune                = 1;
@@ -816,9 +822,9 @@ uint8_t calculateDOW(uint16_t year, uint8_t month, uint8_t day) {
 
 // Get current date (DoY, DoW, month and year)
 void getCurrentDate() {
-  RtcDateTime now = Rtc.GetDateTime();
   Serial.println(F("Debug (RTC): Delay before getting current day of year"));
-  delay(50);
+  delay(1000);
+  RtcDateTime now = Rtc.GetDateTime();
 
   if (isRtcDateTimeSane(now)) {
     uint8_t daysInMonth[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
@@ -1008,11 +1014,21 @@ void setDateTime(byte btn) {
         uint8_t second = 0;
 
         RtcDateTime dt(year, month, day, hour, minute, second);
+
+        Rtc.SetIsWriteProtected(false);
+        Rtc.SetIsRunning(false);
+
         Rtc.SetDateTime(dt);
+
+        Rtc.SetIsRunning(true);
       }
+
       initialized = false;
       operatingState = STANDBY;
       errorCode = 0;
+
+      config.isDateSet = true;
+      saveConfig();
 
       // Update current date
       getCurrentDate();
