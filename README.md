@@ -327,6 +327,14 @@ In any of these submenus, use the **Switch** `▲▼` button to select a period,
 
 > ℹ️ **Note:** If you have been using the device for a long time, its memory may be full and older data will be overwritten as intended. For example, if it is currently June and you try to view August data, the device cannot show future data, so it interprets it as past data and displays the same period from last year (if the device was in use at that time).
 
+#### Clear statistics
+
+<img src="docs/icons/c.svg" alt="c" width="16" /><img src="docs/icons/l.svg" alt="l" width="16" /><img src="docs/icons/r.svg" alt="r" width="16" /><img src="docs/icons/empty.svg" alt="empty" width="16" /><img src="docs/icons/a.svg" alt="a" width="16" /><img src="docs/icons/ll.svg" alt="ll" width="16" /><img src="docs/icons/empty.svg" alt="empty" width="16" /><img src="docs/icons/d.svg" alt="d" width="16" /><img src="docs/icons/a.svg" alt="a" width="16" /><img src="docs/icons/t.svg" alt="t" width="16" /><img src="docs/icons/a.svg" alt="a" width="16" />
+
+The **clr** submenu allows you to clear all statistics data. After entering this submenu, a **clr all data** warning is displayed. The LEDs will blink to indicate that this is a destructive action. If you are sure you want to proceed, press and hold the **OK** `▶` button for **2 seconds** to clear all data.
+
+> ⚠️ **Warning:** This action cannot be undone. Make sure you have a backup of your statistics if you might need them later. You can create a backup by connecting the device via the serial port using the Arduino IDE.
+
 ### Settings (`conf` menu)
 
 <img src="docs/icons/c.svg" alt="c" width="16" /><img src="docs/icons/o.svg" alt="o" width="16" /><img src="docs/icons/n.svg" alt="n" width="16" /><img src="docs/icons/f.svg" alt="f" width="16" />
