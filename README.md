@@ -8,6 +8,30 @@ The runUp device is easy to assemble and requires no soldering. It uses widely a
 
 The device can be placed into a simple DIY enclosure. Using two transparent acrylic Arduino Uno cases, hex standoffs, bamboo sushi stick and heat-shrink tubing, you can easily build a good-looking case.
 
+## Contents
+
+- [Features](#features)
+- [Hardware](#hardware)
+  - [Connection and wiring diagram](#connection-and-wiring-diagram)
+  - [RTC module](#rtc-module)
+- [Enclosure](#enclosure)
+  - [Tools](#tools)
+  - [Parts](#parts)
+  - [Assembly](#assembly)
+- [Software](#software)
+  - [Libraries](#libraries)
+  - [Uploading the program](#uploading-the-program)
+- [Usage](#usage)
+  - [First run](#first-run)
+  - [Sprints](#sprints-run-menu)
+  - [Statistics](#statistics-data-menu)
+  - [Settings](#settings-conf-menu)
+  - [Date and time](#date-and-time-cloc-menu)
+- [Error handling](#error-handling)
+- [Releases](#releases)
+- [License](#license)
+- [Author](#author)
+
 ## Features
 
 ### Sprint sessions
