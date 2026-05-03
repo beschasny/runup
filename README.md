@@ -216,25 +216,17 @@ At the bottom of the MFS, there are three buttons used to operate the device men
 
 ### First run
 
-If this is the first run with a fresh battery, you need to set up the current date and time for the device to work properly.
+If this is the first run with a fresh battery, you need to set the current date and time for the device to work properly.
 
 > ℹ️ **Note:** In rare cases, the RTC may fail to set the date and time on the first attempt. This can happen if the RTC has not yet synchronized or if write protection is enabled. If this occurs, an error message will be shown. To fix the issue and set the correct date and time, see the [**Error handling**](#error-handling) section.
 
-If everything works correctly, after powering on you will see the default values, with the first digit blinking:
+If everything works correctly, after powering on you will see the initial values, with the first digit blinking:
 
 <img src="docs/icons/1.svg" alt="1" width="16" /><img src="docs/icons/dot-grey.svg" alt="dot grey" height="3" width="3" /><img src="docs/icons/2.svg" alt="2" width="16" /><img src="docs/icons/dot-red.svg" alt="dot red" height="3" width="3" /><img src="docs/icons/3.svg" alt="3" width="16" /><img src="docs/icons/dot-grey.svg" alt="dot grey" height="3" width="3" /><img src="docs/icons/0.svg" alt="0" width="16" />
 
-Use the **Switch** `▲▼` button to change the first digit and press **OK** `▶` to move to the next digit to set the hours. Use the same logic to set the minutes and press **OK** `▶` again. You'll see the default values of the date and month:
+Follow the [**Editing date and time**](#editing-date-and-time) section to configure the current date and time.
 
-<img src="docs/icons/3.svg" alt="3" width="16" /><img src="docs/icons/dot-grey.svg" alt="dot grey" height="3" width="3" /><img src="docs/icons/1.svg" alt="1" width="16" /><img src="docs/icons/dot-red.svg" alt="dot red" height="3" width="3" /><img src="docs/icons/1.svg" alt="1" width="16" /><img src="docs/icons/dot-grey.svg" alt="dot grey" height="3" width="3" /><img src="docs/icons/2.svg" alt="2" width="16" />
-
-Use the **Switch** `▲▼` and **OK** `▶` buttons to change the digits, just like before. After you set the date and month, do the same to set the year (just the last 2 digits – changing the first two might make your device question reality):
-
-<img src="docs/icons/2.svg" alt="2" width="16" /><img src="docs/icons/dot-grey.svg" alt="dot grey" height="3" width="3" /><img src="docs/icons/0.svg" alt="0" width="16" /><img src="docs/icons/dot-grey.svg" alt="dot grey" height="3" width="3" /><img src="docs/icons/2.svg" alt="2" width="16" /><img src="docs/icons/dot-grey.svg" alt="dot grey" height="3" width="3" /><img src="docs/icons/5.svg" alt="5" width="16" />
-
-When you're done, press and hold the **OK** `▶` button for **2 seconds** to save your changes and exit the date and time setup.
-
-You'll then return to the main menu, which contains four top-level items: **run**, **data**, **conf** and **cloc**. Use the **Switch** `▲▼` button to cycle through the menu items, the **OK** `▶` button to enter a selected menu and the **Back** `◀` button to exit.
+After completing the setup, the device will return to the main menu, which contains four top-level items: **run**, **data**, **conf** and **cloc**. Use the **Switch** `▲▼` button to cycle through the menu items, the **OK** `▶` button to enter a selected menu and the **Back** `◀` button to exit.
 
 ### Sprints (`run` menu)
 
@@ -483,7 +475,25 @@ Display basic information about the project author with a GitHub profile link.
 
 <img src="docs/icons/c.svg" alt="c" width="16" /><img src="docs/icons/l.svg" alt="l" width="16" /><img src="docs/icons/o.svg" alt="o" width="16" /><img src="docs/icons/c.svg" alt="c" width="16" />
 
-Coming soon.
+This is one of the main menus used to configure the date and time. Press the **OK** `▶` button to enter it. The device will display the current time. Use the **Switch** `▲▼` button to toggle between the current time, date and year.
+
+In this menu, on any screen (time, date, or year), press the **OK** `▶` button again to start editing. For example, assume you press it on the time screen.
+
+#### Editing date and time
+
+This mode is entered either from the **cloc** menu or automatically on the first run. The first digit will begin blinking.
+
+<img src="docs/icons/1.svg" alt="1" width="16" /><img src="docs/icons/dot-grey.svg" alt="dot grey" height="3" width="3" /><img src="docs/icons/2.svg" alt="2" width="16" /><img src="docs/icons/dot-red.svg" alt="dot red" height="3" width="3" /><img src="docs/icons/3.svg" alt="3" width="16" /><img src="docs/icons/dot-grey.svg" alt="dot grey" height="3" width="3" /><img src="docs/icons/0.svg" alt="0" width="16" />
+
+Use the **Switch** `▲▼` button to change the current digit, then press **OK** `▶` to move to the next one. Set the hours first, then the minutes. After setting the time, the device will switch to date input. The current date and month values will be displayed.
+
+<img src="docs/icons/3.svg" alt="3" width="16" /><img src="docs/icons/dot-grey.svg" alt="dot grey" height="3" width="3" /><img src="docs/icons/1.svg" alt="1" width="16" /><img src="docs/icons/dot-red.svg" alt="dot red" height="3" width="3" /><img src="docs/icons/1.svg" alt="1" width="16" /><img src="docs/icons/dot-grey.svg" alt="dot grey" height="3" width="3" /><img src="docs/icons/2.svg" alt="2" width="16" />
+
+Use the **Switch** `▲▼` and **OK** `▶` buttons to change the digits, just like before. After you set the date and month, do the same to set the year (just the last 2 digits – changing the first two might make your device question reality):
+
+<img src="docs/icons/2.svg" alt="2" width="16" /><img src="docs/icons/dot-grey.svg" alt="dot grey" height="3" width="3" /><img src="docs/icons/0.svg" alt="0" width="16" /><img src="docs/icons/dot-grey.svg" alt="dot grey" height="3" width="3" /><img src="docs/icons/2.svg" alt="2" width="16" /><img src="docs/icons/dot-grey.svg" alt="dot grey" height="3" width="3" /><img src="docs/icons/5.svg" alt="5" width="16" />
+
+When you're done, press and hold the **OK** `▶` button for **2 seconds** to save your changes and exit the date and time setup.
 
 ---
 
