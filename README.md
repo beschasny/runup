@@ -8,6 +8,8 @@ The runUp device is easy to assemble and requires no soldering. It uses widely a
 
 The device can be placed into a simple DIY enclosure. Using two transparent acrylic Arduino Uno cases, hex standoffs, bamboo sushi stick and heat-shrink tubing, you can easily build a good-looking case.
 
+<br>
+
 ## Contents
 
 - [Features](#features)
@@ -31,6 +33,8 @@ The device can be placed into a simple DIY enclosure. Using two transparent acry
 - [Releases](#releases)
 - [License](#license)
 - [Author](#author)
+
+<br>
 
 ## Features
 
@@ -77,6 +81,8 @@ There are also customizable settings that can be saved in EEPROM through the **C
 
 The RTC (real-time clock) module keeps track of the current date and time even when the device is powered off. The date and time can be set through the [**Clock menu**](#date-and-time-cloc-menu), making it easy to monitor daily progress and align work sessions with real-world schedules.
 
+<br>
+
 ## Hardware
 
 - **Arduino Uno R3** (or compatible)
@@ -111,6 +117,8 @@ If you plan to build an enclosure or want to keep the DS1302 RTC module hidden u
 On the MFS, place a jumper wire from the bottom-right group of pins, routing it between the buzzer and the blue trimmer resistor and then up through the top side of the shield, as shown with green marks above. From there, lead the wire through the top part of the Arduino (between the USB socket and the 9V power input) and connect it to the DS1302, which is located between the boards.
 
 Note that the wire routing and RTC module position depend on the board's component layout and the jumper wire length, so they may differ from the illustration shown here in your case.
+
+<br>
 
 ## Enclosure
 
@@ -186,6 +194,8 @@ After routing the jumper wire and assembling the enclosure, the device should lo
 
 ![Assembly step 5: Final look](docs/assembly/step-5-runUp-device.png)
 
+<br>
+
 ## Software
 
 ### Libraries
@@ -201,6 +211,8 @@ The runUp device uses my fork of the **Multifunction Shield library** by Kashif 
 After assembling the device and reading the note below, upload the program sketch via USB cable using the Arduino IDE or any other environment that supports uploading. If everything works as expected, the display will either show the first menu item or the date and time settings, depending on your setup and initial conditions (such as the RTC module settings and EEPROM contents).
 
 > ℹ️ **Note:** The device uses EEPROM. If your Arduino already has data stored there, you'll need to clear it for proper operation. This can be done directly with the device, as you will see later.
+
+<br>
 
 ## Usage
 
@@ -495,27 +507,54 @@ Use the **Switch** `▲▼` and **OK** `▶` buttons to change the digits, just 
 
 When you're done, press and hold the **OK** `▶` button for **2 seconds** to save your changes and exit the date and time setup.
 
----
+<br>
 
 ## Error handling
 
-Coming soon.
+During device operation, errors may occur. For convenience, each error is assigned a specific code for easier identification and troubleshooting.
 
----
+### Error 1. RTC is halted
+
+<img src="docs/icons/e-big.svg" alt="e-big" width="16" /><img src="docs/icons/r.svg" alt="r" width="16" /><img src="docs/icons/dot-red.svg" alt="dot red" height="3" width="3" /><img src="docs/icons/0.svg" alt="0" width="16" /><img src="docs/icons/1.svg" alt="1" width="16" />
+
+The real-time clock (RTC) has stopped or is not running. This usually happens when the RTC module has not been initialized or has lost power.
+
+Press and hold the **OK** `▶` button for **2 seconds** to enter the [**Editing date and time**](#editing-date-and-time) mode. Then set the correct date and time following the instructions above.
+
+If the issue persists, power off the device and check the RTC battery and wiring for loose contacts or poor connections.
+
+### Error 2. Invalid date and time
+
+<img src="docs/icons/e-big.svg" alt="e-big" width="16" /><img src="docs/icons/r.svg" alt="r" width="16" /><img src="docs/icons/dot-red.svg" alt="dot red" height="3" width="3" /><img src="docs/icons/0.svg" alt="0" width="16" /><img src="docs/icons/2.svg" alt="2" width="16" />
+
+The device detected that the stored date or time is incorrect or corrupted. Reconfigure the date and time to restore normal operation.
+
+Press and hold the **OK** `▶` button for **2 seconds** to enter the [**Editing date and time**](#editing-date-and-time) mode. Then set the correct date and time following the instructions above.
+
+### Error 3. Data not cleared
+
+<img src="docs/icons/e-big.svg" alt="e-big" width="16" /><img src="docs/icons/r.svg" alt="r" width="16" /><img src="docs/icons/dot-red.svg" alt="dot red" height="3" width="3" /><img src="docs/icons/0.svg" alt="0" width="16" /><img src="docs/icons/3.svg" alt="3" width="16" />
+
+The system detected an existing invalid record during startup or while saving a sprint. This usually happens when the EEPROM was not properly cleared and contains leftover data.
+
+Try to use the [**Clear statistics**](#clear-statistics) function in the [**Statistics menu**](#statistics-data-menu) if this is the first run. Otherwise, if you do not want to lose your statistics, connect the device via the serial port using the Arduino IDE and inspect the EEPROM content to identify the issue.
+
+<br>
 
 ## Releases
 
-See [Releases](../../releases) for tagged versions.
-Current stable release: **v1.2.1**
+Current stable release: **v1.2.0**
 
----
+See [Releases](../../releases) for tagged versions.
+
+<br>
 
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
 
----
+<br>
 
 ## Author
 
-👤 [beschasny](https://github.com/beschasny)
+[@beschasny](https://github.com/beschasny)
