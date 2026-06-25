@@ -1,5 +1,6 @@
 // -----------------------------------------------------------------
-// Project:  runUp - Arduino Pomodoro Timer
+// Project:  runUp - Arduino Pomodoro Tracker
+// URL:      https://github.com/beschasny/runup
 // Hardware: Arduino UNO R3 (or compatible), Multifunction Shield,
 //           DS1302 RTC module
 // Author:   https://github.com/beschasny
@@ -7,9 +8,9 @@
 // -----------------------------------------------------------------
 //
 // Description:
-//   Pomodoro timer for Arduino Uno R3 using a Multifunction
+//   Pomodoro Tracker for Arduino Uno R3 using a Multifunction
 //   Shield (buttons, display, buzzer) and a DS1302 RTC module.
-//   Features include managing Pomodoro sprint sessions,
+//   Features include managing Pomodoro timer sprint sessions,
 //   statistics tracking, customizable settings, and more.
 //
 // Versioning:
