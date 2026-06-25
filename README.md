@@ -1,8 +1,8 @@
-<img src="docs/icons/r.svg" alt="r" width="64" /><img src="docs/icons/u.svg" alt="u" width="64" /><img src="docs/icons/n.svg" alt="n" width="64" /><img src="docs/icons/up-arrow.svg" alt="Up arrow" width="64" />
+![runUp Arduino Pomodoro Tracker teaser](docs/showcase/runup-teaser.png)
 
-# **runUp**: Arduino Pomodoro Timer
+# **runUp**: Arduino Pomodoro Tracker
 
-Pomodoro timer implementation for **Arduino Uno R3** (or compatible) using a **Multifunction Shield** and a **DS1302 RTC module**. It helps manage work in focused sprints, track productivity with daily historical statistics stored in EEPROM and customize timer behavior with various settings.
+Pomodoro tracker implementation for **Arduino Uno R3** (or compatible) using a **Multifunction Shield** and a **DS1302 RTC module**. It helps manage work in focused sprints, track productivity with daily historical statistics stored in EEPROM and customize timer behavior with various settings.
 
 The runUp device is easy to assemble and requires no soldering. It uses widely available, low-cost components, making it accessible for hobbyists and beginners. The Multifunction Shield plugs directly onto the Arduino Uno and the DS1302 RTC module connects via simple jumper wires.
 
@@ -91,6 +91,12 @@ The RTC (real-time clock) module keeps track of the current date and time even w
 - DuPont jumper wires (5x female-to-female, 20 cm each)
 - Power cable for Arduino
 
+![Front View](docs/showcase/runup-front.png)
+
+The RTC module is hidden between the two boards to save space and keep the build compact:
+
+![Back View](docs/showcase/runup-back.jpg)
+
 ### Connection and wiring diagram
 
 > ⚠️ **Warning:** When mounting the Multifunction Shield on the Arduino Uno with a USB Type-B socket, ensure the underside of the shield **does not touch** the metal parts of the socket. Contact may cause a short circuit when powering the device. Use a thin piece of insulating material (like a plastic card) between the boards to prevent accidental contact.
@@ -122,12 +128,16 @@ Note that the wire routing and RTC module position depend on the board's compone
 
 ## Enclosure
 
+The enclosure is based on two similar Arduino acrylic cases, whose walls are held together with hex standoffs and heat shrink tubing:
+
+![Side View](docs/showcase/runup-side.png)
+
 ### Tools
 
 You will need the following tools to build the enclosure:
 
 - Wire cutters, pliers, awl, utility knife (for case walls, holes and button rods)
-- Flat and round files (for smoothing and adjusting case walls and rod edges)
+- Flat and round files or sandpaper (for smoothing and adjusting case walls and rod edges)
 - Lighter or matches (for shrinking heat-shrink tubing)
 - Black permanent marker (for coloring button rods)
 
@@ -557,4 +567,4 @@ This project is licensed under the [MIT License](LICENSE).
 
 ## Author
 
-[@beschasny](https://github.com/beschasny)
+Created and maintained by [@beschasny](https://github.com/beschasny)
