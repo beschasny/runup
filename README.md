@@ -95,7 +95,7 @@ The RTC (real-time clock) module keeps track of the current date and time even w
 
 The RTC module is hidden between the two boards to save space and keep the build compact:
 
-![Back View](docs/showcase/runup-back.jpg)
+![Back View](docs/showcase/runup-back.png)
 
 ### Connection and wiring diagram
 
@@ -280,7 +280,7 @@ If you need to cancel the current sprint, pause it first, then press and hold th
 
 #### One-Click modes
 
-There are three temporary one-click modes to enhance your sprint experiance. They can be enabled or disabled only during a sprint by pressing and holding one of the buttons for **2 seconds**. These modes are temporary; they remain active only until you turn off the device or disable them manually.
+There are three temporary one-click modes to enhance your sprint experience. They can be enabled or disabled only during a sprint by pressing and holding one of the buttons for **2 seconds**. These modes are temporary; they remain active only until you turn off the device or disable them manually.
 
 > ℹ️ **Example:** If there is an emergency online meeting with your very serious colleagues and *A-ha – Take On Me* does not feel like the most appropriate background music, all sounds can be temporarily disabled using the **Back** `◀` button, without opening the settings or interrupting your workflow. Once the meeting ends, you can re-enable sound using the same button.
 
