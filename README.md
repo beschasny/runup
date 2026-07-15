@@ -48,6 +48,12 @@ The runUp device follows the classic [Pomodoro technique](https://en.wikipedia.o
 | Short Break       | 5 min    | Quick rest, stretch                        |
 | Long Break        | 15 min   | After every 4 work sessions, extended rest |
 
+🎬 **[Watch the Video Demonstration on YouTube](https://www.youtube.com/watch?v=jj0XEMDlV4U&hl=en&cc_load_policy=1)**
+
+[![Watch the video](https://img.youtube.com/vi/jj0XEMDlV4U/hqdefault.jpg)](https://www.youtube.com/watch?v=jj0XEMDlV4U&hl=en&cc_load_policy=1)
+
+<br>
+
 ### Statistics tracking
 
 The [**Statistics menu**](#statistics-data-menu) contains statistical data that allows you to track your progress.
